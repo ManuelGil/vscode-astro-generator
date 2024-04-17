@@ -7,7 +7,7 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/ManuelGil/vscode-astro-generator?style=for-the-badge&logo=github)](https://github.com/ManuelGil/vscode-astro-generator)
 [![GitHub license](https://img.shields.io/github/license/ManuelGil/vscode-astro-generator?style=for-the-badge&logo=github)](https://github.com/ManuelGil/vscode-astro-generator/blob/main/LICENSE)
 
-Astro File Generator is a Visual Studio Code extension that automatically generates Astro files based on a template. It is useful for creating Astro files quickly and efficiently.
+👩‍🚀 Astro File Generator is a Visual Studio Code extension that automatically generates Astro files based on a template. It is useful for creating Astro files quickly and efficiently.
 
 ## Table of Contents
 

@@ -14,30 +14,47 @@ import { directoryMap, getRelativePath } from '../helpers';
 import { NodeModel } from '../models';
 
 /**
- * The FilesController class.
+ * The ListFilesController class.
  *
  * @class
  * @classdesc The class that represents the list files controller.
  * @export
  * @public
- * @property {ExtensionConfig} config - The configuration object
  * @example
- * const controller = new FilesController(config);
+ * const controller = new ListFilesController();
  */
-export class FilesController {
+export class ListFilesController {
+  // -----------------------------------------------------------------
+  // Properties
+  // -----------------------------------------------------------------
+
+  // Public properties
+  /**
+   * The static config property.
+   *
+   * @static
+   * @property
+   * @public
+   * @type {ExtensionConfig}
+   * @memberof ListFilesController
+   */
+  static config: ExtensionConfig;
+
   // -----------------------------------------------------------------
   // Constructor
   // -----------------------------------------------------------------
 
   /**
-   * Constructor for the FilesController class
+   * Constructor for the ListFilesController class
    *
    * @constructor
    * @param {ExtensionConfig} config - The configuration object
    * @public
-   * @memberof FilesController
+   * @memberof ListFilesController
    */
-  constructor(public readonly config: ExtensionConfig) {}
+  constructor(config: ExtensionConfig) {
+    ListFilesController.config = config;
+  }
 
   // -----------------------------------------------------------------
   // Methods
@@ -51,13 +68,13 @@ export class FilesController {
    * @param {number} maxResults - The maximum number of results
    * @public
    * @async
-   * @memberof FilesController
+   * @memberof ListFilesController
    * @example
    * controller.getFiles();
    *
    * @returns {Promise<NodeModel[] | void>} - The list of files
    */
-  async getFiles(
+  static async getFiles(
     maxResults: number = Number.MAX_SAFE_INTEGER,
   ): Promise<NodeModel[] | void> {
     // Get the files in the folder
@@ -89,7 +106,7 @@ export class FilesController {
             filename ?? 'Untitled',
             new ThemeIcon('file'),
             {
-              command: `${EXTENSION_ID}.files.openFile`,
+              command: `${EXTENSION_ID}.list.openFile`,
               title: 'Open File',
               arguments: [document.uri],
             },
@@ -109,9 +126,9 @@ export class FilesController {
    * The openFile method.
    *
    * @function openFile
-   * @param {NodeModel} uri - The file URI
+   * @param {Uri} uri - The file URI
    * @public
-   * @memberof FilesController
+   * @memberof ListFilesController
    * @example
    * controller.openFile('file:///path/to/file');
    *
@@ -127,16 +144,16 @@ export class FilesController {
    * The gotoLine method.
    *
    * @function gotoLine
-   * @param {string} uri - The file URI
+   * @param {Uri} uri - The file URI
    * @param {number} line - The line number
    * @public
-   * @memberof FilesController
+   * @memberof ListFilesController
    * @example
    * controller.gotoLine('file:///path/to/file', 1);
    *
    * @returns {void} - The promise
    */
-  gotoLine(uri: string, line: number) {
+  gotoLine(uri: Uri, line: number) {
     workspace.openTextDocument(uri).then((document) => {
       window.showTextDocument(document).then((editor) => {
         const pos = new Position(line, 0);

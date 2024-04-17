@@ -4,11 +4,11 @@ import * as vscode from 'vscode';
 
 // Import the Configs, Controllers, and Providers
 import { EXTENSION_ID, ExtensionConfig } from './app/configs';
-import { FeedbackController, FilesController } from './app/controllers';
+import { FeedbackController, ListFilesController } from './app/controllers';
 import {
   FeedbackProvider,
-  FilesProvider,
   IntegrationsProvider,
+  ListComponentsProvider,
 } from './app/providers';
 
 // this method is called when your extension is activated
@@ -36,53 +36,56 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // -----------------------------------------------------------------
-  // Register FilesController
+  // Register ListFilesController
   // -----------------------------------------------------------------
 
-  // Create a new FilesController
-  const filesController = new FilesController(config);
+  // Create a new ListFilesController
+  const listFilesController = new ListFilesController(config);
 
-  const disposableOpenFile = vscode.commands.registerCommand(
-    `${EXTENSION_ID}.files.openFile`,
-    (uri) => filesController.openFile(uri),
+  const disposableListOpenFile = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.list.openFile`,
+    (uri) => listFilesController.openFile(uri),
   );
 
-  const disposableGotoLine = vscode.commands.registerCommand(
-    `${EXTENSION_ID}.files.gotoLine`,
-    (uri, line) => filesController.gotoLine(uri, line),
+  const disposableListGotoLine = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.list.gotoLine`,
+    (uri, line) => listFilesController.gotoLine(uri, line),
   );
 
-  context.subscriptions.push(disposableOpenFile, disposableGotoLine);
+  context.subscriptions.push(disposableListOpenFile, disposableListGotoLine);
 
   // -----------------------------------------------------------------
-  // Register FilesProvider and list commands
+  // Register ListComponentsProvider and list commands
   // -----------------------------------------------------------------
 
-  // Create a new FilesProvider
-  const filesProvider = new FilesProvider(filesController);
+  // Create a new ListComponentsProvider
+  const listComponentsProvider = new ListComponentsProvider();
 
   // Register the list provider
-  const filesTreeView = vscode.window.createTreeView(
-    `${EXTENSION_ID}.filesView`,
+  const disposableListComponentsTreeView = vscode.window.createTreeView(
+    `${EXTENSION_ID}.listComponentsView`,
     {
-      treeDataProvider: filesProvider,
+      treeDataProvider: listComponentsProvider,
       showCollapseAll: true,
     },
   );
 
-  const disposableRefreshList = vscode.commands.registerCommand(
-    `${EXTENSION_ID}.files.refresh`,
-    () => filesProvider.refresh(),
+  const disposableRefreshListComponents = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.listComponents.refresh`,
+    () => listComponentsProvider.refresh(),
   );
 
-  context.subscriptions.push(filesTreeView, disposableRefreshList);
+  context.subscriptions.push(
+    disposableListComponentsTreeView,
+    disposableRefreshListComponents,
+  );
 
   // -----------------------------------------------------------------
   // Register FilesProvider and ListMethodsProvider events
   // -----------------------------------------------------------------
 
   vscode.workspace.onDidSaveTextDocument(() => {
-    filesProvider.refresh();
+    listComponentsProvider.refresh();
   });
 
   // -----------------------------------------------------------------

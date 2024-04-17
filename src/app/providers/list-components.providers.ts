@@ -2,54 +2,43 @@ import {
   Event,
   EventEmitter,
   ProviderResult,
+  ThemeIcon,
   TreeDataProvider,
   TreeItem,
+  workspace,
 } from 'vscode';
 
-import { FilesController } from '../controllers';
+import { EXTENSION_ID } from '../configs';
+import { ListFilesController } from '../controllers';
 import { NodeModel } from '../models';
 
 /**
- * The FilesProvider class
+ * The ListComponentsProvider class
  *
  * @class
- * @classdesc The class that represents the files provider.
+ * @classdesc The class that represents the list of files provider.
  * @export
  * @public
  * @implements {TreeDataProvider<NodeModel>}
  * @property {EventEmitter<NodeModel | undefined | null | void>} _onDidChangeTreeData - The onDidChangeTreeData event emitter
  * @property {Event<NodeModel | undefined | null | void>} onDidChangeTreeData - The onDidChangeTreeData event
- * @property {filesController} controller - The files controller
+ * @property {ListFilesController} controller - The list of files controller
  * @example
- * const provider = new FilesProvider();
+ * const provider = new ListComponentsProvider();
  *
  * @see https://code.visualstudio.com/api/references/vscode-api#TreeDataProvider
  */
-export class FilesProvider implements TreeDataProvider<NodeModel> {
+export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
   // -----------------------------------------------------------------
   // Properties
   // -----------------------------------------------------------------
-
-  // Public properties
-  /**
-   * The onDidChangeTreeData event.
-   * @type {Event<NodeModel | undefined | null | void>}
-   * @public
-   * @memberof FilesProvider
-   * @example
-   * readonly onDidChangeTreeData: Event<Node | undefined | null | void>;
-   * this.onDidChangeTreeData = this._onDidChangeTreeData.event;
-   *
-   * @see https://code.visualstudio.com/api/references/vscode-api#Event
-   */
-  readonly onDidChangeTreeData: Event<NodeModel | undefined | null | void>;
 
   // Private properties
   /**
    * The onDidChangeTreeData event emitter.
    * @type {EventEmitter<NodeModel | undefined | null | void>}
    * @private
-   * @memberof FilesProvider
+   * @memberof ListComponentsProvider
    * @example
    * this._onDidChangeTreeData = new EventEmitter<Node | undefined | null | void>();
    * this.onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -60,18 +49,32 @@ export class FilesProvider implements TreeDataProvider<NodeModel> {
     NodeModel | undefined | null | void
   >;
 
+  // Public properties
+  /**
+   * The onDidChangeTreeData event.
+   * @type {Event<NodeModel | undefined | null | void>}
+   * @public
+   * @memberof ListComponentsProvider
+   * @example
+   * readonly onDidChangeTreeData: Event<Node | undefined | null | void>;
+   * this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+   *
+   * @see https://code.visualstudio.com/api/references/vscode-api#Event
+   */
+  readonly onDidChangeTreeData: Event<NodeModel | undefined | null | void>;
+
   // -----------------------------------------------------------------
   // Constructor
   // -----------------------------------------------------------------
 
   /**
-   * Constructor for the FilesProvider class
+   * Constructor for the ListComponentsProvider class
    *
    * @constructor
    * @public
-   * @memberof FilesProvider
+   * @memberof ListComponentsProvider
    */
-  constructor(readonly controller: FilesController) {
+  constructor() {
     this._onDidChangeTreeData = new EventEmitter<
       NodeModel | undefined | null | void
     >();
@@ -89,7 +92,7 @@ export class FilesProvider implements TreeDataProvider<NodeModel> {
    * @function getTreeItem
    * @param {NodeModel} element - The element
    * @public
-   * @memberof FilesProvider
+   * @memberof ListComponentsProvider
    * @example
    * const treeItem = provider.getTreeItem(element);
    *
@@ -107,7 +110,7 @@ export class FilesProvider implements TreeDataProvider<NodeModel> {
    * @function getChildren
    * @param {NodeModel} [element] - The element
    * @public
-   * @memberof FilesProvider
+   * @memberof ListComponentsProvider
    * @example
    * const children = provider.getChildren(element);
    *
@@ -120,7 +123,7 @@ export class FilesProvider implements TreeDataProvider<NodeModel> {
       return element.children;
     }
 
-    return this.getListFiles();
+    return this.getListComponents();
   }
 
   /**
@@ -140,23 +143,60 @@ export class FilesProvider implements TreeDataProvider<NodeModel> {
 
   // Private methods
   /**
-   * Gets the list of files.
+   * Returns the list of files.
    *
-   * @function getListFiles
+   * @function getListComponents
    * @private
-   * @memberof FilesProvider
+   * @memberof ListComponentsProvider
    * @example
-   * const files = provider.getListFiles();
+   * const files = provider.getListComponents();
    *
    * @returns {Promise<NodeModel[] | undefined>} - The list of files
    */
-  private async getListFiles(): Promise<NodeModel[] | undefined> {
-    const files = await this.controller.getFiles();
+  private async getListComponents(): Promise<NodeModel[] | undefined> {
+    const files = await ListFilesController.getFiles();
 
     if (!files) {
       return;
     }
 
-    return files;
+    for (const file of files) {
+      const document = await workspace.openTextDocument(
+        file.resourceUri?.path ?? '',
+      );
+
+      const children = Array.from(
+        { length: document.lineCount },
+        (_, index) => {
+          const line = document.lineAt(index);
+
+          let node: NodeModel | undefined;
+
+          if (line.text.match(/\s<[A-Z]+[a-z]+/g)) {
+            node = new NodeModel(
+              line.text.trim(),
+              new ThemeIcon('symbol-method'),
+              {
+                command: `${EXTENSION_ID}.list.gotoLine`,
+                title: line.text,
+                arguments: [file.resourceUri, index],
+              },
+            );
+          }
+
+          return node;
+        },
+      );
+
+      file.setChildren(
+        children.filter((child) => child !== undefined) as NodeModel[],
+      );
+    }
+
+    const nodes = files.filter(
+      (file) => file.children && file.children.length !== 0,
+    );
+
+    return nodes.length > 0 ? nodes : undefined;
   }
 }
