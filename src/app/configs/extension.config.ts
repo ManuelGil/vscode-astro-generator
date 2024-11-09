@@ -1,9 +1,9 @@
-import { WorkspaceConfiguration } from 'vscode';
+import { WorkspaceConfiguration } from 'vscode'
 
-import { EXCLUDE, INCLUDE, SHOW_PATH } from './constants.config';
+import { EXCLUDE, INCLUDE, SHOW_PATH } from './constants.config'
 
 /**
- * The Config class.
+ * The ExtensionConfig class.
  *
  * @class
  * @classdesc The class that represents the configuration of the extension.
@@ -14,7 +14,7 @@ import { EXCLUDE, INCLUDE, SHOW_PATH } from './constants.config';
  * @property {string[]} exclude - The files to exclude
  * @property {boolean} showPath - Whether to show the path or not
  * @example
- * const config = new Config(workspace.getConfiguration());
+ * const config = new ExtensionConfig(workspace.getConfiguration());
  * console.log(config.include);
  * console.log(config.exclude);
  */
@@ -28,48 +28,48 @@ export class ExtensionConfig {
    * The files to include.
    * @type {string[]}
    * @public
-   * @memberof Config
+   * @memberof ExtensionConfig
    * @example
-   * const config = new Config(workspace.getConfiguration());
+   * const config = new ExtensionConfig(workspace.getConfiguration());
    * console.log(config.include);
    */
-  include: string[];
+  include: string[]
   /**
    * The files to exclude.
    * @type {string[]}
    * @public
-   * @memberof Config
+   * @memberof ExtensionConfig
    * @example
-   * const config = new Config(workspace.getConfiguration());
+   * const config = new ExtensionConfig(workspace.getConfiguration());
    * console.log(config.exclude);
    */
-  exclude: string[];
+  exclude: string[]
   /**
    * Whether to show the path or not.
    * @type {boolean}
    * @public
-   * @memberof Config
+   * @memberof ExtensionConfig
    * @example
-   * const config = new Config(workspace.getConfiguration());
+   * const config = new ExtensionConfig(workspace.getConfiguration());
    * console.log(config.showPath);
    */
-  showPath: boolean;
+  showPath: boolean
 
   // -----------------------------------------------------------------
   // Constructor
   // -----------------------------------------------------------------
 
   /**
-   * Constructor for the Config class.
+   * Constructor for the ExtensionConfig class.
    *
    * @constructor
    * @param {WorkspaceConfiguration} config - The workspace configuration
    * @public
-   * @memberof Config
+   * @memberof ExtensionConfig
    */
   constructor(readonly config: WorkspaceConfiguration) {
-    this.include = config.get<string[]>('files.include') ?? INCLUDE;
-    this.exclude = config.get<string[]>('files.exclude') ?? EXCLUDE;
-    this.showPath = config.get<boolean>('files.showPath') ?? SHOW_PATH;
+    this.include = config.get<string[]>('files.include') ?? INCLUDE
+    this.exclude = config.get<string[]>('files.exclude') ?? EXCLUDE
+    this.showPath = config.get<boolean>('files.showPath') ?? SHOW_PATH
   }
 }

@@ -1,4 +1,4 @@
-import { MessageItem, Uri, env, window } from 'vscode';
+import { MessageItem, Uri, env, window } from 'vscode'
 
 import {
   EXTENSION_BUGS_URL,
@@ -7,7 +7,7 @@ import {
   EXTENSION_PAYPAL_URL,
   EXTENSION_SOCIAL_MEDIA_URL,
   EXTENSION_SPONSOR_URL,
-} from '../configs';
+} from '../configs'
 
 /**
  * The FeedbackController class.
@@ -48,7 +48,7 @@ export class FeedbackController {
    * @returns {void} - No return value
    */
   reportIssues(): void {
-    env.openExternal(Uri.parse(EXTENSION_BUGS_URL));
+    env.openExternal(Uri.parse(EXTENSION_BUGS_URL))
   }
 
   /**
@@ -63,7 +63,7 @@ export class FeedbackController {
   rateUs(): void {
     env.openExternal(
       Uri.parse(`${EXTENSION_MARKETPLACE_URL}&ssr=false#review-details`),
-    );
+    )
   }
 
   /**
@@ -76,7 +76,7 @@ export class FeedbackController {
    * @returns {void} - No return value
    */
   followUs(): void {
-    env.openExternal(Uri.parse(EXTENSION_SOCIAL_MEDIA_URL));
+    env.openExternal(Uri.parse(EXTENSION_SOCIAL_MEDIA_URL))
   }
 
   /**
@@ -94,24 +94,24 @@ export class FeedbackController {
     const actions: MessageItem[] = [
       { title: 'Become a Sponsor' },
       { title: 'Donate via PayPal' },
-    ];
+    ]
 
     // Show the message
     const option = await window.showInformationMessage(
       `Although ${EXTENSION_NAME} is offered at no cost, your support is
         deeply appreciated if you find it beneficial. Thank you for considering!`,
       ...actions,
-    );
+    )
 
     // Handle the actions
     switch (option?.title) {
       case actions[0].title:
-        env.openExternal(Uri.parse(EXTENSION_SPONSOR_URL));
-        break;
+        env.openExternal(Uri.parse(EXTENSION_SPONSOR_URL))
+        break
 
       case actions[1].title:
-        env.openExternal(Uri.parse(EXTENSION_PAYPAL_URL));
-        break;
+        env.openExternal(Uri.parse(EXTENSION_PAYPAL_URL))
+        break
     }
   }
 }

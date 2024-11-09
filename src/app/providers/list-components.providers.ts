@@ -6,11 +6,11 @@ import {
   TreeDataProvider,
   TreeItem,
   workspace,
-} from 'vscode';
+} from 'vscode'
 
-import { EXTENSION_ID } from '../configs';
-import { ListFilesController } from '../controllers';
-import { NodeModel } from '../models';
+import { EXTENSION_ID } from '../configs'
+import { ListFilesController } from '../controllers'
+import { NodeModel } from '../models'
 
 /**
  * The ListComponentsProvider class
@@ -47,7 +47,7 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    */
   private _onDidChangeTreeData: EventEmitter<
     NodeModel | undefined | null | void
-  >;
+  >
 
   // Public properties
   /**
@@ -61,7 +61,7 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    *
    * @see https://code.visualstudio.com/api/references/vscode-api#Event
    */
-  readonly onDidChangeTreeData: Event<NodeModel | undefined | null | void>;
+  readonly onDidChangeTreeData: Event<NodeModel | undefined | null | void>
 
   // -----------------------------------------------------------------
   // Constructor
@@ -77,8 +77,8 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
   constructor() {
     this._onDidChangeTreeData = new EventEmitter<
       NodeModel | undefined | null | void
-    >();
-    this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+    >()
+    this.onDidChangeTreeData = this._onDidChangeTreeData.event
   }
 
   // -----------------------------------------------------------------
@@ -101,7 +101,7 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    * @see https://code.visualstudio.com/api/references/vscode-api#TreeDataProvider
    */
   getTreeItem(element: NodeModel): TreeItem | Thenable<TreeItem> {
-    return element;
+    return element
   }
 
   /**
@@ -120,10 +120,10 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    */
   getChildren(element?: NodeModel): ProviderResult<NodeModel[]> {
     if (element) {
-      return element.children;
+      return element.children
     }
 
-    return this.getListComponents();
+    return this.getListComponents()
   }
 
   /**
@@ -138,7 +138,7 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    * @returns {void} - No return value
    */
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire()
   }
 
   // Private methods
@@ -154,23 +154,23 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    * @returns {Promise<NodeModel[] | undefined>} - The list of files
    */
   private async getListComponents(): Promise<NodeModel[] | undefined> {
-    const files = await ListFilesController.getFiles();
+    const files = await ListFilesController.getFiles()
 
     if (!files) {
-      return;
+      return
     }
 
     for (const file of files) {
       const document = await workspace.openTextDocument(
         file.resourceUri?.path ?? '',
-      );
+      )
 
       const children = Array.from(
         { length: document.lineCount },
         (_, index) => {
-          const line = document.lineAt(index);
+          const line = document.lineAt(index)
 
-          let node: NodeModel | undefined;
+          let node: NodeModel | undefined
 
           if (line.text.match(/\s<[A-Z]+[a-z]+/g)) {
             node = new NodeModel(
@@ -181,22 +181,22 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
                 title: line.text,
                 arguments: [file.resourceUri, index],
               },
-            );
+            )
           }
 
-          return node;
+          return node
         },
-      );
+      )
 
       file.setChildren(
         children.filter((child) => child !== undefined) as NodeModel[],
-      );
+      )
     }
 
     const nodes = files.filter(
       (file) => file.children && file.children.length !== 0,
-    );
+    )
 
-    return nodes.length > 0 ? nodes : undefined;
+    return nodes.length > 0 ? nodes : undefined
   }
 }

@@ -8,7 +8,7 @@
  *
  * @returns {string} - The unique identifier of the extension
  */
-export const EXTENSION_ID: string = 'astroGenerator';
+export const EXTENSION_ID: string = 'astroGenerator'
 
 /**
  * EXTENSION_NAME: The name of the extension.
@@ -20,7 +20,7 @@ export const EXTENSION_ID: string = 'astroGenerator';
  *
  * @returns {string} - The name of the extension
  */
-export const EXTENSION_NAME: string = 'Astro File Generator';
+export const EXTENSION_NAME: string = 'Astro File Generator'
 
 /**
  * EXTENSION_REPOSITORY_URL: The repository URL of the extension.
@@ -33,7 +33,7 @@ export const EXTENSION_NAME: string = 'Astro File Generator';
  * @returns {string} - The repository URL of the extension
  */
 export const EXTENSION_REPOSITORY_URL: string =
-  'https://github.com/ManuelGil/vscode-astro-generator';
+  'https://github.com/ManuelGil/vscode-astro-generator'
 
 /**
  * EXTENSION_MARKETPLACE_URL: The marketplace URL of the extension.
@@ -46,7 +46,7 @@ export const EXTENSION_REPOSITORY_URL: string =
  * @returns {string} - The marketplace URL of the extension
  */
 export const EXTENSION_MARKETPLACE_URL: string =
-  'https://marketplace.visualstudio.com/items?itemName=imgildev.vscode-astro-generator';
+  'https://marketplace.visualstudio.com/items?itemName=imgildev.vscode-astro-generator'
 
 /**
  * EXTENSION_BUGS_URL: The bugs URL of the extension.
@@ -59,7 +59,7 @@ export const EXTENSION_MARKETPLACE_URL: string =
  * @returns {string} - The bugs URL of the extension
  */
 export const EXTENSION_BUGS_URL: string =
-  'https://github.com/ManuelGil/vscode-astro-generator/issues';
+  'https://github.com/ManuelGil/vscode-astro-generator/issues'
 
 /**
  * EXTENSION_SOCIAL_MEDIA_URL: The social media URL of the extension.
@@ -71,8 +71,7 @@ export const EXTENSION_BUGS_URL: string =
  *
  * @returns {string} - The social media URL of the extension
  */
-export const EXTENSION_SOCIAL_MEDIA_URL: string =
-  'https://github.com/ManuelGil';
+export const EXTENSION_SOCIAL_MEDIA_URL: string = 'https://github.com/ManuelGil'
 
 /**
  * EXTENSION_SPONSOR_URL: The sponsor URL of the extension.
@@ -85,7 +84,7 @@ export const EXTENSION_SOCIAL_MEDIA_URL: string =
  * @returns {string} - The sponsor URL of the extension
  */
 export const EXTENSION_SPONSOR_URL: string =
-  'https://github.com/sponsors/ManuelGil';
+  'https://github.com/sponsors/ManuelGil'
 
 /**
  * EXTENSION_PAYPAL_URL: The PayPal URL of the extension.
@@ -98,7 +97,7 @@ export const EXTENSION_SPONSOR_URL: string =
  * @returns {string} - The PayPal URL of the extension
  */
 export const EXTENSION_PAYPAL_URL: string =
-  'https://www.paypal.com/paypalme/ManuelFGil';
+  'https://www.paypal.com/paypalme/ManuelFGil'
 
 /**
  * INCLUDE: The files to include.
@@ -110,7 +109,7 @@ export const EXTENSION_PAYPAL_URL: string =
  *
  * @returns {string[]} - The files to include
  */
-export const INCLUDE: string[] = ['js', 'ts', 'tsx', 'jsx', 'md'];
+export const INCLUDE: string[] = ['astro']
 /**
  * EXCLUDE: The files to exclude.
  * @type {string[]}
@@ -127,7 +126,7 @@ export const EXCLUDE: string[] = [
   '**/out/**',
   '**/build/**',
   '**/.*/**',
-];
+]
 
 /**
  * SHOW_PATH: Whether to show the path or not.
@@ -139,4 +138,4 @@ export const EXCLUDE: string[] = [
  *
  * @returns {boolean} - Whether to show the path or not
  */
-export const SHOW_PATH: boolean = true;
+export const SHOW_PATH: boolean = true

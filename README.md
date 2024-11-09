@@ -43,8 +43,7 @@ Configure your project by creating or updating a settings.json file at the proje
    ```jsonc
    {
      "astroGenerator.files.include": [
-         "json",
-         "jsonc"
+         "astro"
      ], // The file extensions to watch for changes. Example: "json", "jsonc"
      "astroGenerator.files.exclude": [
          "**/node_modules/**",

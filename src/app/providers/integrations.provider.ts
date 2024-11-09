@@ -5,10 +5,10 @@ import {
   WebviewView,
   WebviewViewProvider,
   WebviewViewResolveContext,
-} from 'vscode';
+} from 'vscode'
 
-import { EXTENSION_ID } from '../configs';
-import { getNonce } from '../helpers';
+import { EXTENSION_ID } from '../configs'
+import { getNonce } from '../helpers'
 
 /**
  * The IntegrationsProvider class.
@@ -38,7 +38,7 @@ export class IntegrationsProvider implements WebviewViewProvider {
    * @memberof IntegrationsProvider
    * @type {string}
    */
-  static readonly viewType: string = `${EXTENSION_ID}.integrationsView`;
+  static readonly viewType: string = `${EXTENSION_ID}.integrationsView`
 
   // Private properties
   /**
@@ -48,7 +48,7 @@ export class IntegrationsProvider implements WebviewViewProvider {
    * @memberof IntegrationsProvider
    * @type {WebviewView}
    */
-  private _view?: WebviewView;
+  private _view?: WebviewView
 
   // -----------------------------------------------------------------
   // Constructor
@@ -88,25 +88,25 @@ export class IntegrationsProvider implements WebviewViewProvider {
     _: WebviewViewResolveContext,
     _token: CancellationToken,
   ): void {
-    this._view = webviewView;
+    this._view = webviewView
 
     webviewView.webview.options = {
       // Allow scripts in the webview
       enableScripts: true,
 
       localResourceRoots: [this._extensionUri],
-    };
+    }
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview)
 
     webviewView.webview.onDidReceiveMessage((data) => {
       switch (data.type) {
         case 'event': {
           // this.response(data);
-          break;
+          break
         }
       }
-    });
+    })
   }
 
   // Private methods
@@ -126,15 +126,15 @@ export class IntegrationsProvider implements WebviewViewProvider {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
       Uri.joinPath(this._extensionUri, 'assets', 'main.js'),
-    );
+    )
 
     // Do the same for the stylesheet.
     const styleMainUri = webview.asWebviewUri(
       Uri.joinPath(this._extensionUri, 'assets', 'main.css'),
-    );
+    )
 
     // Use a nonce to only allow a specific script to be run.
-    const nonce = getNonce();
+    const nonce = getNonce()
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -161,6 +161,6 @@ export class IntegrationsProvider implements WebviewViewProvider {
     <script nonce="${nonce}" src="${scriptUri}"></script>
   </body>
 </html>
-`;
+`
   }
 }
