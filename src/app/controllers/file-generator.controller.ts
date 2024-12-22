@@ -374,8 +374,8 @@ const { text } = Astro.props;
     }
 
     const resolvedFolderPath = join(workspaceFolder.uri.fsPath, folderName)
-    const fileName = `${this.toDashedString(componentName)}.astro`
-    const content = this.fileContent(this.toTitleCase(componentName), template)
+    const fileName = `${componentName}.astro`
+    const content = this.fileContent(componentName, template)
 
     this.saveFile(resolvedFolderPath, fileName, content)
   }
@@ -453,8 +453,8 @@ const { text } = Astro.props;
     const items = customComponents.map((item: any) => {
       return {
         label: item.name,
-        description: item.command,
-        detail: item.extension,
+        description: item.description,
+        detail: `Extension: ${item.extension}`,
       }
     })
 
@@ -496,49 +496,10 @@ const { text } = Astro.props;
     const componentTemplate = template.template.join('\n')
 
     const resolvedFolderPath = join(workspaceFolder.uri.fsPath, folderName)
-    const fileName = `${this.toDashedString(componentName)}.${template.extension}`
-    const content = this.fileContent(
-      this.toTitleCase(componentName),
-      componentTemplate,
-    )
+    const fileName = `${componentName}.${template.extension}`
+    const content = this.fileContent(componentName, componentTemplate)
 
     this.saveFile(resolvedFolderPath, fileName, content)
-  }
-
-  /**
-   * The toTitleCase method.
-   * Converts the first character of a string to uppercase.
-   *
-   * @function toTitleCase
-   * @private
-   * @memberof FilesController
-   * @example
-   * controller.toTitleCase('input');
-   *
-   * @param {string} input - The input string
-   *
-   * @returns {string} - The title case string
-   */
-  private toTitleCase(input: string) {
-    return input.charAt(0).toUpperCase() + input.slice(1)
-  }
-
-  /**
-   * The toDashedString method.
-   * Converts a camelCase string to a dashed string.
-   *
-   * @function toDashedString
-   * @private
-   * @memberof FilesController
-   * @example
-   * controller.toDashedString('input');
-   *
-   * @param {string} input - The input string
-   *
-   * @returns {string} - The dashed string
-   */
-  private toDashedString(input: string) {
-    return input.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
   }
 
   /**
@@ -566,8 +527,8 @@ const { text } = Astro.props;
 
     // Add the template
     content += template
-      .replace(/{{entityName}}/g, componentName)
-      .replace(/{{entityNameLower}}/g, componentName.toLowerCase())
+      .replace(/{{componentName}}/g, componentName)
+      .replace(/{{componentNameLower}}/g, componentName.toLowerCase())
 
     // Add a final newline
     if (insertFinalNewline) {

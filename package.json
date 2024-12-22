@@ -45,6 +45,12 @@
 		"configuration": {
 			"title": "Astro File Generator",
 			"properties": {
+				"astroGenerator.enable": {
+					"type": "boolean",
+					"default": true,
+					"scope": "resource",
+					"description": "Enable or disable the Astro File Generator extension"
+				},
 				"astroGenerator.files.include": {
 					"type": "array",
 					"default": [
@@ -70,6 +76,46 @@
 					"default": true,
 					"scope": "resource",
 					"description": "Show the path of the file in the name of the list of generated files"
+				},
+				"astroGenerator.formatting.headerCommentTemplate": {
+					"type": "array",
+					"default": [],
+					"scope": "resource",
+					"description": "Header comment template to add to the top of the generated file"
+				},
+				"astroGenerator.formatting.insertFinalNewline": {
+					"type": "boolean",
+					"default": true,
+					"scope": "resource",
+					"description": "Insert a newline character at the end of the file"
+				},
+				"astroGenerator.templates.customComponents": {
+					"type": "array",
+					"default": [
+						{
+							"name": "Blog Post",
+							"description": "A blog post template",
+							"extension": "md",
+							"template": [
+								"---",
+								"title: 'Title'",
+								"description: 'Description'",
+								"date: '2022-01-01'",
+								"tags: ['tag1', 'tag2']",
+								"---",
+								"",
+								"# Title",
+								"",
+								"Description",
+								"",
+								"## Subtitle",
+								"",
+								"Content"
+							]
+						}
+					],
+					"scope": "resource",
+					"description": "Custom components to generate"
 				}
 			}
 		},
@@ -79,6 +125,47 @@
 				"title": "Refresh List of Components",
 				"category": "Astro File Generator",
 				"icon": "$(refresh)"
+			},
+			{
+				"command": "astroGenerator.file.generateBasicPage",
+				"title": "Generate Basic Page",
+				"category": "Astro File Generator"
+			},
+			{
+				"command": "astroGenerator.file.generateBasicComponent",
+				"title": "Generate Basic Component",
+				"category": "Astro File Generator"
+			},
+			{
+				"command": "astroGenerator.file.generateLayoutWithSlots",
+				"title": "Generate Layout with Slots",
+				"category": "Astro File Generator"
+			},
+			{
+				"command": "astroGenerator.file.generateStaticDataPage",
+				"title": "Generate Static Data Page",
+				"category": "Astro File Generator"
+			},
+			{
+				"command": "astroGenerator.file.generatePageWithGetStaticProps",
+				"title": "Generate Page with getStaticProps",
+				"category": "Astro File Generator"
+			},
+			{
+				"command": "astroGenerator.file.generateStyledComponent",
+				"title": "Generate Styled Component",
+				"category": "Astro File Generator"
+			},
+			{
+				"command": "astroGenerator.file.generateCustomComponent",
+				"title": "Generate Custom Component",
+				"category": "Astro File Generator"
+			}
+		],
+		"submenus": [
+			{
+				"id": "astroGenerator.folder.submenu",
+				"label": "Astro File Generator"
 			}
 		],
 		"menus": {
@@ -87,6 +174,43 @@
 					"command": "astroGenerator.listComponents.refresh",
 					"when": "view == astroGenerator.listComponentsView",
 					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"submenu": "astroGenerator.folder.submenu",
+					"group": "2_workspace",
+					"when": "explorerViewletFocus && explorerResourceIsFolder && !explorerResourceIsRoot"
+				}
+			],
+			"astroGenerator.folder.submenu": [
+				{
+					"command": "astroGenerator.file.generateBasicPage",
+					"group": "1_generate@1"
+				},
+				{
+					"command": "astroGenerator.file.generateBasicComponent",
+					"group": "1_generate@2"
+				},
+				{
+					"command": "astroGenerator.file.generateLayoutWithSlots",
+					"group": "1_generate@3"
+				},
+				{
+					"command": "astroGenerator.file.generateStaticDataPage",
+					"group": "1_generate@4"
+				},
+				{
+					"command": "astroGenerator.file.generatePageWithGetStaticProps",
+					"group": "1_generate@5"
+				},
+				{
+					"command": "astroGenerator.file.generateStyledComponent",
+					"group": "1_generate@6"
+				},
+				{
+					"command": "astroGenerator.file.generateCustomComponent",
+					"group": "1_generate@7"
 				}
 			]
 		},

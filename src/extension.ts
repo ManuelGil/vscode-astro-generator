@@ -10,7 +10,11 @@ import {
   ExtensionConfig,
   USER_PUBLISHER,
 } from './app/configs'
-import { FeedbackController, ListFilesController } from './app/controllers'
+import {
+  FeedbackController,
+  FileGeneratorController,
+  ListFilesController,
+} from './app/controllers'
 import {
   FeedbackProvider,
   IntegrationsProvider,
@@ -252,6 +256,52 @@ export async function activate(context: vscode.ExtensionContext) {
   )
 
   context.subscriptions.push(integrationsWebviewProvider)
+
+  // -----------------------------------------------------------------
+  // Register the commands
+  // -----------------------------------------------------------------
+
+  const fileGeneratorController = new FileGeneratorController(config)
+
+  const disposableGenerateBasicPage = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.file.generateBasicPage`,
+    (uri) => fileGeneratorController.generateBasicPage(uri),
+  )
+  const disposableGenerateBasicComponent = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.file.generateBasicComponent`,
+    (uri) => fileGeneratorController.generateBasicComponent(uri),
+  )
+  const disposableGenerateLayoutWithSlots = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.file.generateLayoutWithSlots`,
+    (uri) => fileGeneratorController.generateLayoutWithSlots(uri),
+  )
+  const disposableGenerateStaticDataPage = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.file.generateStaticDataPage`,
+    (uri) => fileGeneratorController.generateStaticDataPage(uri),
+  )
+  const disposableGeneratePageWithGetStaticProps =
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.file.generatePageWithGetStaticProps`,
+      (uri) => fileGeneratorController.generatePageWithGetStaticProps(uri),
+    )
+  const disposableGenerateStyledComponent = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.file.generateStyledComponent`,
+    (uri) => fileGeneratorController.generateStyledComponent(uri),
+  )
+  const disposableGenerateCustomComponent = vscode.commands.registerCommand(
+    `${EXTENSION_ID}.file.generateCustomComponent`,
+    (uri) => fileGeneratorController.generateCustomComponent(uri),
+  )
+
+  context.subscriptions.push(
+    disposableGenerateBasicPage,
+    disposableGenerateBasicComponent,
+    disposableGenerateLayoutWithSlots,
+    disposableGenerateStaticDataPage,
+    disposableGeneratePageWithGetStaticProps,
+    disposableGenerateStyledComponent,
+    disposableGenerateCustomComponent,
+  )
 }
 
 // this method is called when your extension is deactivated
