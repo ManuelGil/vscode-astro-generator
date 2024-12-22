@@ -2,8 +2,8 @@ import { MessageItem, Uri, env, window } from 'vscode'
 
 import {
   EXTENSION_BUGS_URL,
+  EXTENSION_DISPLAY_NAME,
   EXTENSION_MARKETPLACE_URL,
-  EXTENSION_NAME,
   EXTENSION_PAYPAL_URL,
   EXTENSION_SOCIAL_MEDIA_URL,
   EXTENSION_SPONSOR_URL,
@@ -98,7 +98,7 @@ export class FeedbackController {
 
     // Show the message
     const option = await window.showInformationMessage(
-      `Although ${EXTENSION_NAME} is offered at no cost, your support is
+      `Although ${EXTENSION_DISPLAY_NAME} is offered at no cost, your support is
         deeply appreciated if you find it beneficial. Thank you for considering!`,
       ...actions,
     )
