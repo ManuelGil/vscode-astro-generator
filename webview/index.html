@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integraciones</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body class="min-h-screen bg-background text-white">
+    <div x-data="integrations">
+      <aside x-html="searchFilter"></aside>
+      <aside x-html="integrationsSection"></aside>
+    </div>
+    <script id="integrations-data" type="application/json">
+      [
+        {
+          "name": "@astrojs/tailwind",
+          "description": "Use Tailwind CSS to style your Astro site",
+          "category": ["CSS + UI", "Frameworks"],
+          "icon": "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/HEAD/.github/logo-dark.svg"
+        },
+        {
+          "name": "@astrojs/react",
+          "description": "Use React components within Astro",
+          "category": ["Frameworks"],
+          "icon": "https://raw.githubusercontent.com/facebook/react/main/fixtures/dom/public/react-logo.svg"
+        },
+        {
+          "name": "@astrojs/sitemap",
+          "description": "Generate a sitemap for your Astro site",
+          "category": ["Performance + SEO"]
+        }
+      ]
+    </script>
+  </body>
+</html>
