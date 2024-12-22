@@ -526,9 +526,7 @@ const { text } = Astro.props;
     }
 
     // Add the template
-    content += template
-      .replace(/{{componentName}}/g, componentName)
-      .replace(/{{componentNameLower}}/g, componentName.toLowerCase())
+    content += template.replace(/{{ComponentName}}/g, componentName)
 
     // Add a final newline
     if (insertFinalNewline) {
