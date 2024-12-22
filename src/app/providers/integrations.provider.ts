@@ -131,26 +131,6 @@ export class IntegrationsProvider implements WebviewViewProvider {
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce()
 
-    const data = [
-      {
-        name: '@astrojs/tailwind',
-        description: 'Use Tailwind CSS to style your Astro site',
-        category: ['CSS + UI', 'Frameworks'],
-        icon: 'https://raw.githubusercontent.com/tailwindlabs/tailwindcss/HEAD/.github/logo-dark.svg',
-      },
-      {
-        name: '@astrojs/react',
-        description: 'Use React components within Astro',
-        category: ['Frameworks'],
-        icon: 'https://raw.githubusercontent.com/facebook/react/main/fixtures/dom/public/react-logo.svg',
-      },
-      {
-        name: '@astrojs/sitemap',
-        description: 'Generate a sitemap for your Astro site',
-        category: ['Performance + SEO'],
-      },
-    ]
-
     return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -178,8 +158,7 @@ export class IntegrationsProvider implements WebviewViewProvider {
       <aside x-html="searchFilter"></aside>
       <aside x-html="integrationsSection"></aside>
     </div>
-    <script nonce="${nonce}" id="integrations-data" type="application/json">${JSON.stringify(data, null, 2)}</script>
-    <script nonce="${nonce}" src="${scriptUri}"></script>
+    <script nonce="${nonce}" src="${scriptUri}" defer></script>
   </body>
 </html>
 `
