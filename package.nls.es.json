@@ -1,0 +1,21 @@
+{
+	"astroGenerator.enable": "Habilitar o deshabilitar la extensión Astro File Generator",
+	"astroGenerator.files.include": "Patrones globales para incluir en el paquete. El valor predeterminado es astro",
+	"astroGenerator.files.exclude": "Patrones globales para excluir del paquete. El valor predeterminado es node_modules, dist, out, build y cualquier archivo oculto",
+	"astroGenerator.files.showPath": "Mostrar la ruta del archivo en el nombre de la lista de archivos generados",
+	"astroGenerator.formatting.headerCommentTemplate": "Plantilla de comentario de encabezado para agregar en la parte superior del archivo generado",
+	"astroGenerator.formatting.insertFinalNewline": "Insertar un carácter de nueva línea al final del archivo",
+	"astroGenerator.templates.customComponents": "Componentes personalizados para generar",
+	"astroGenerator.listComponents.refresh": "Actualizar la lista de componentes",
+	"astroGenerator.file.generateBasicPage": "Generar una Página Básica",
+	"astroGenerator.file.generateBasicComponent": "Generar un Componente Básico",
+	"astroGenerator.file.generateLayoutWithSlots": "Generar un Diseño con Slots",
+	"astroGenerator.file.generateStaticDataPage": "Generar una Página de Datos Estáticos",
+	"astroGenerator.file.generatePageWithGetStaticProps": "Generar una Página con getStaticProps",
+	"astroGenerator.file.generateStyledComponent": "Generar un Componente Estilizado",
+	"astroGenerator.file.generateCustomComponent": "Generar un Componente Personalizado",
+	"viewsWelcome.astroGenerator.listFilesView": "Para capturar archivos de forma efectiva, asegúrese de incluir la forma plural del tipo de archivo en la configuración del espacio de trabajo.\n[Abrir archivo de configuración del espacio de trabajo](command:workbench.action.openWorkspaceSettingsFile)\nPara obtener más información sobre cómo usar Astro File Generator para VS Code [lea nuestra documentación](https://github.com/ManuelGil/vscode-astro-generator).",
+	"views.astroGenerator.integrationsView": "Integraciones de Astro",
+	"views.astroGenerator.listComponentsView": "Lista de Componentes",
+	"views.astroGenerator.feedbackView": "Ayuda y Comentarios"
+}

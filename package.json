@@ -49,7 +49,7 @@
 					"type": "boolean",
 					"default": true,
 					"scope": "resource",
-					"description": "Enable or disable the Astro File Generator extension"
+					"description": "%astroGenerator.enable%"
 				},
 				"astroGenerator.files.include": {
 					"type": "array",
@@ -57,7 +57,7 @@
 						"astro"
 					],
 					"scope": "resource",
-					"description": "Glob patterns to include in the package. The default is astro."
+					"description": "%astroGenerator.files.include%"
 				},
 				"astroGenerator.files.exclude": {
 					"type": "array",
@@ -69,25 +69,25 @@
 						"**/.*/**"
 					],
 					"scope": "resource",
-					"description": "Glob patterns to exclude from the package. The default is node_modules, dist, out, build, and any hidden files."
+					"description": "%astroGenerator.files.exclude%"
 				},
 				"astroGenerator.files.showPath": {
 					"type": "boolean",
 					"default": true,
 					"scope": "resource",
-					"description": "Show the path of the file in the name of the list of generated files"
+					"description": "%astroGenerator.files.showPath%"
 				},
 				"astroGenerator.formatting.headerCommentTemplate": {
 					"type": "array",
 					"default": [],
 					"scope": "resource",
-					"description": "Header comment template to add to the top of the generated file"
+					"description": "%astroGenerator.formatting.headerCommentTemplate%"
 				},
 				"astroGenerator.formatting.insertFinalNewline": {
 					"type": "boolean",
 					"default": true,
 					"scope": "resource",
-					"description": "Insert a newline character at the end of the file"
+					"description": "%astroGenerator.formatting.insertFinalNewline%"
 				},
 				"astroGenerator.templates.customComponents": {
 					"type": "array",
@@ -115,50 +115,50 @@
 						}
 					],
 					"scope": "resource",
-					"description": "Custom components to generate"
+					"description": "%astroGenerator.templates.customComponents%"
 				}
 			}
 		},
 		"commands": [
 			{
 				"command": "astroGenerator.listComponents.refresh",
-				"title": "Refresh List of Components",
+				"title": "%astroGenerator.listComponents.refresh%",
 				"category": "Astro File Generator",
 				"icon": "$(refresh)"
 			},
 			{
 				"command": "astroGenerator.file.generateBasicPage",
-				"title": "Generate Basic Page",
+				"title": "%astroGenerator.file.generateBasicPage%",
 				"category": "Astro File Generator"
 			},
 			{
 				"command": "astroGenerator.file.generateBasicComponent",
-				"title": "Generate Basic Component",
+				"title": "%astroGenerator.file.generateBasicComponent%",
 				"category": "Astro File Generator"
 			},
 			{
 				"command": "astroGenerator.file.generateLayoutWithSlots",
-				"title": "Generate Layout with Slots",
+				"title": "%astroGenerator.file.generateLayoutWithSlots%",
 				"category": "Astro File Generator"
 			},
 			{
 				"command": "astroGenerator.file.generateStaticDataPage",
-				"title": "Generate Static Data Page",
+				"title": "%astroGenerator.file.generateStaticDataPage%",
 				"category": "Astro File Generator"
 			},
 			{
 				"command": "astroGenerator.file.generatePageWithGetStaticProps",
-				"title": "Generate Page with getStaticProps",
+				"title": "%astroGenerator.file.generatePageWithGetStaticProps%",
 				"category": "Astro File Generator"
 			},
 			{
 				"command": "astroGenerator.file.generateStyledComponent",
-				"title": "Generate Styled Component",
+				"title": "%astroGenerator.file.generateStyledComponent%",
 				"category": "Astro File Generator"
 			},
 			{
 				"command": "astroGenerator.file.generateCustomComponent",
-				"title": "Generate Custom Component",
+				"title": "%astroGenerator.file.generateCustomComponent%",
 				"category": "Astro File Generator"
 			}
 		],
@@ -217,7 +217,7 @@
 		"viewsWelcome": [
 			{
 				"view": "astroGenerator.listComponentsView",
-				"contents": "To effectively capture files, ensure you include the file type within the workspace settings.\n[Open Workspace Setting](command:workbench.action.openWorkspaceSettingsFile)\nTo learn more about how to use the Starter Kit [read our docs](https://docs.sml.li)."
+				"contents": "%viewsWelcome.astroGenerator.listFilesView%"
 			}
 		],
 		"viewsContainers": {
@@ -233,17 +233,17 @@
 			"astro-explorer": [
 				{
 					"id": "astroGenerator.integrationsView",
-					"name": "Astro Integrations",
+					"name": "%views.astroGenerator.integrationsView%",
 					"type": "webview"
 				},
 				{
 					"id": "astroGenerator.listComponentsView",
-					"name": "List of Components",
+					"name": "%views.astroGenerator.listComponentsView%",
 					"visibility": "visible"
 				},
 				{
 					"id": "astroGenerator.feedbackView",
-					"name": "Help and Feedback",
+					"name": "%views.astroGenerator.feedbackView%",
 					"visibility": "visible"
 				}
 			]

@@ -1,0 +1,21 @@
+{
+	"astroGenerator.enable": "Enable or disable the Astro File Generator extension",
+	"astroGenerator.files.include": "Glob patterns to include in the package. The default is astro",
+	"astroGenerator.files.exclude": "Glob patterns to exclude from the package. The default is node_modules, dist, out, build, and any hidden files",
+	"astroGenerator.files.showPath": "Show the path of the file in the name of the list of generated files",
+	"astroGenerator.formatting.headerCommentTemplate": "Header comment template to add to the top of the generated file",
+	"astroGenerator.formatting.insertFinalNewline": "Insert a newline character at the end of the file",
+	"astroGenerator.templates.customComponents": "Custom components to generate",
+	"astroGenerator.listComponents.refresh": "Refresh the list of components",
+	"astroGenerator.file.generateBasicPage": "Generate a Basic Page",
+	"astroGenerator.file.generateBasicComponent": "Generate a Basic Component",
+	"astroGenerator.file.generateLayoutWithSlots": "Generate a Layout with Slots",
+	"astroGenerator.file.generateStaticDataPage": "Generate a Static Data Page",
+	"astroGenerator.file.generatePageWithGetStaticProps": "Generate a Page with getStaticProps",
+	"astroGenerator.file.generateStyledComponent": "Generate a Styled Component",
+	"astroGenerator.file.generateCustomComponent": "Generate a Custom Component",
+	"viewsWelcome.astroGenerator.listFilesView": "To effectively capture files, ensure you include the plural form of the file type within the workspace settings.\n[Open Workspace Setting](command:workbench.action.openWorkspaceSettingsFile)\nTo learn more about how to use Astro File Generator for VS Code [read our docs](https://github.com/ManuelGil/vscode-astro-generator).",
+	"views.astroGenerator.integrationsView": "Astro Integrations",
+	"views.astroGenerator.listComponentsView": "List of Components",
+	"views.astroGenerator.feedbackView": "Help and Feedback"
+}

@@ -362,9 +362,9 @@ const { text } = Astro.props;
 
     const componentName = await getName(
       l10n.t('Enter the component name'),
-      l10n.t('Enter the component name, e.g. user, product, order, etc.'),
+      l10n.t('Enter the component name, e.g. User, Product, Order, etc.'),
       (name) =>
-        !/^[A-Z][a-zA-Z]+?$/.test(name)
+        !/^[a-zA-Z\-]+?$/.test(name)
           ? l10n.t('The component name is invalid! Please enter a valid name')
           : undefined,
     )
@@ -470,9 +470,9 @@ const { text } = Astro.props;
 
     const componentName = await getName(
       l10n.t('Enter the component name'),
-      l10n.t('Enter the component name, e.g. user, product, order, etc.'),
+      l10n.t('Enter the component name, e.g. User, Product, Order, etc.'),
       (name) =>
-        !/^[A-Z][a-zA-Z]+?$/.test(name)
+        !/^[a-zA-Z\-]+?$/.test(name)
           ? l10n.t('The component name is invalid! Please enter a valid name')
           : undefined,
     )
