@@ -1,13 +1,14 @@
 import Alpine from 'alpinejs';
 import { IntegrationsSection } from './components/IntegrationsSection';
 import { SearchFilter } from './components/searchFilter';
+import { integrations } from './data/integrations';
 import './style.css';
 
 const vscode = acquireVsCodeApi();
 
 document.addEventListener('alpine:init', () => {
   Alpine.data('integrations', () => ({
-    integrations: [],
+    integrations: integrations,
     searchQuery: '',
     categories: [
       'Official',
@@ -24,11 +25,6 @@ document.addEventListener('alpine:init', () => {
     ],
     searchFilter: SearchFilter,
     integrationsSection: IntegrationsSection,
-
-    async init() {
-      const dataElement = document.querySelector('#integrations-data');
-      this.integrations = JSON.parse(dataElement.textContent);
-    },
 
     get filteredIntegrations() {
       if (!this.searchQuery) {
@@ -60,4 +56,6 @@ document.addEventListener('alpine:init', () => {
   }));
 });
 
-Alpine.start();
+document.addEventListener('DOMContentLoaded', function () {
+  Alpine.start();
+});

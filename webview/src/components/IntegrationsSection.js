@@ -38,10 +38,10 @@ export const IntegrationsSection = `
                 <li>
                   <button
                     @click="sendIntegrationData(integration)"
-                    class="w-full rounded-md px-6 py-3 text-left font-medium focus:outline-none"
+                    class="w-full text-left font-medium focus:outline-none"
                   >
                     <div
-                      class="bg-card hover:bg-card-hover relative rounded-lg p-6 transition-colors duration-200"
+                      class="relative bg-card px-6 py-3 transition-colors duration-200 hover:bg-card-hover"
                     >
                       <div class="flex items-start gap-4">
                         <!-- Icon -->

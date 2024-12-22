@@ -100,7 +100,7 @@
 				{
 					"id": "astro-explorer",
 					"title": "Astro File Generator",
-					"icon": "./out/assets/logo.svg"
+					"icon": "./icon.svg"
 				}
 			]
 		},
