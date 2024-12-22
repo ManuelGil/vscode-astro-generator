@@ -67,11 +67,7 @@ export class NodeModel extends TreeItem {
    */
   constructor(
     readonly label: string | TreeItemLabel,
-    readonly iconPath?:
-      | string
-      | Uri
-      | { light: string | Uri; dark: string | Uri }
-      | ThemeIcon,
+    readonly iconPath?: string | Uri | { light: Uri; dark: Uri } | ThemeIcon,
     readonly command?: Command,
     readonly resourceUri?: Uri,
     readonly contextValue?: string,

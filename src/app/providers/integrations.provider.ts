@@ -100,12 +100,7 @@ export class IntegrationsProvider implements WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview)
 
     webviewView.webview.onDidReceiveMessage((data) => {
-      switch (data.type) {
-        case 'event': {
-          // this.response(data);
-          break
-        }
-      }
+      console.log(data)
     })
   }
 
@@ -129,12 +124,32 @@ export class IntegrationsProvider implements WebviewViewProvider {
     )
 
     // Do the same for the stylesheet.
-    const styleMainUri = webview.asWebviewUri(
+    const styleUri = webview.asWebviewUri(
       Uri.joinPath(this._extensionUri, 'assets', 'main.css'),
     )
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce()
+
+    const data = [
+      {
+        name: '@astrojs/tailwind',
+        description: 'Use Tailwind CSS to style your Astro site',
+        category: ['CSS + UI', 'Frameworks'],
+        icon: 'https://raw.githubusercontent.com/tailwindlabs/tailwindcss/HEAD/.github/logo-dark.svg',
+      },
+      {
+        name: '@astrojs/react',
+        description: 'Use React components within Astro',
+        category: ['Frameworks'],
+        icon: 'https://raw.githubusercontent.com/facebook/react/main/fixtures/dom/public/react-logo.svg',
+      },
+      {
+        name: '@astrojs/sitemap',
+        description: 'Generate a sitemap for your Astro site',
+        category: ['Performance + SEO'],
+      },
+    ]
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -148,16 +163,22 @@ export class IntegrationsProvider implements WebviewViewProvider {
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';"
+      content="default-src 'none'; img-src vscode-resource: https:; style-src ${webview.cspSource};
+      script-src 'nonce-${nonce}' 'unsafe-eval' ${webview.cspSource};"
     />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link href="${styleMainUri}" rel="stylesheet" />
+    <link href="${styleUri}" rel="stylesheet" />
 
     <title>Astro Integrations</title>
   </head>
-  <body>
+  <body class="min-h-screen bg-background text-white">
+    <div x-data="integrations">
+      <aside x-html="searchFilter"></aside>
+      <aside x-html="integrationsSection"></aside>
+    </div>
+    <script nonce="${nonce}" id="integrations-data" type="application/json">${JSON.stringify(data, null, 2)}</script>
     <script nonce="${nonce}" src="${scriptUri}"></script>
   </body>
 </html>

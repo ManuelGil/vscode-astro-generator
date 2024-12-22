@@ -100,7 +100,7 @@ export class FeedbackProvider implements TreeDataProvider<NodeModel> {
    * @see https://code.visualstudio.com/api/references/vscode-api#TreeDataProvider
    */
   getTreeItem(element: NodeModel): TreeItem | Thenable<TreeItem> {
-    return element
+    return element as TreeItem
   }
 
   /**
