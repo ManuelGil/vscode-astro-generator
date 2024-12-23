@@ -8,6 +8,7 @@ import {
 } from 'vscode'
 
 import { EXTENSION_ID } from '../configs'
+import { TerminalController } from '../controllers'
 import { getNonce } from '../helpers'
 
 /**
@@ -100,7 +101,7 @@ export class IntegrationsProvider implements WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview)
 
     webviewView.webview.onDidReceiveMessage((data) => {
-      console.log(data)
+      TerminalController.installIntegrationPackage(data)
     })
   }
 

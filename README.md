@@ -19,6 +19,10 @@ With a few clicks, you can create:
 - **Styled Component**: Create a Styled Component file for Astro.
 - **Custom Component**: Create a Custom Component file with a simple template.
 
+The extension is highly customizable, allowing you to create custom templates for your files. It also automatically formats the file upon saving and integrates with Astro for easy installation.
+
+![Astro File Generator](https://raw.githubusercontent.com/ManuelGil/vscode-astro-generator/main/images/astro-file-generator.gif)
+
 ## Table of Contents
 
 - [Astro File Generator](#astro-file-generator)
