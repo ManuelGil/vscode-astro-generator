@@ -3,6 +3,7 @@
 	"astroGenerator.files.include": "Glob patterns to include in the package. The default is astro",
 	"astroGenerator.files.exclude": "Glob patterns to exclude from the package. The default is node_modules, dist, out, build, and any hidden files",
 	"astroGenerator.files.showPath": "Show the path of the file in the name of the list of generated files",
+	"astroGenerator.files.skipFolderConfirmation": "Skip the destination folder confirmation when generating files",
 	"astroGenerator.formatting.headerCommentTemplate": "Header comment template to add to the top of the generated file",
 	"astroGenerator.formatting.insertFinalNewline": "Insert a newline character at the end of the file",
 	"astroGenerator.templates.customComponents": "Custom components to generate",

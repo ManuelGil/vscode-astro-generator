@@ -9,6 +9,7 @@ import {
   INCLUDE,
   INSERT_FINAL_NEWLINE,
   SHOW_PATH,
+  SKIP_FOLDER_CONFIRMATION,
 } from './constants.config'
 
 /**
@@ -22,6 +23,10 @@ import {
  * @property {string[]} include - The files to include
  * @property {string[]} exclude - The files to exclude
  * @property {boolean} showPath - Whether to show the path or not
+ * @property {boolean} skipFolderConfirmation - Whether to skip the folder confirmation or not
+ * @property {string[]} headerCommentTemplate - The header comment template
+ * @property {boolean} insertFinalNewline - The flag to insert a final newline
+ * @property {ContentTemplate[]} customComponents - The custom components
  * @example
  * const config = new ExtensionConfig(workspace.getConfiguration());
  * console.log(config.include);
@@ -79,6 +84,17 @@ export class ExtensionConfig {
   showPath: boolean
 
   /**
+   * Whether to skip the folder confirmation or not.
+   * @type {boolean}
+   * @public
+   * @memberof Config
+   * @example
+   * const config = new Config(workspace.getConfiguration());
+   * console.log(config.skipFolderConfirmation);
+   */
+  skipFolderConfirmation: boolean
+
+  /**
    * The header comment template.
    * @type {string[]}
    * @public
@@ -128,6 +144,10 @@ export class ExtensionConfig {
     this.include = config.get<string[]>('files.include', INCLUDE)
     this.exclude = config.get<string[]>('files.exclude', EXCLUDE)
     this.showPath = config.get<boolean>('files.showPath', SHOW_PATH)
+    this.skipFolderConfirmation = config.get<boolean>(
+      'files.skipFolderConfirmation',
+      SKIP_FOLDER_CONFIRMATION,
+    )
     this.headerCommentTemplate = config.get<string[]>(
       'formatting.headerCommentTemplate',
       HEADER_COMMENT_TEMPLATE,
@@ -163,6 +183,10 @@ export class ExtensionConfig {
     this.include = config.get<string[]>('files.include', INCLUDE)
     this.exclude = config.get<string[]>('files.exclude', EXCLUDE)
     this.showPath = config.get<boolean>('files.showPath', SHOW_PATH)
+    this.skipFolderConfirmation = config.get<boolean>(
+      'files.skipFolderConfirmation',
+      SKIP_FOLDER_CONFIRMATION,
+    )
     this.headerCommentTemplate = config.get<string[]>(
       'formatting.headerCommentTemplate',
       HEADER_COMMENT_TEMPLATE,

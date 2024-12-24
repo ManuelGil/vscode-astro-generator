@@ -344,20 +344,27 @@ const { text } = Astro.props;
       return
     }
 
-    const folderName = await getPath(
-      l10n.t('Enter the folder name where the file will be created'),
-      l10n.t('Enter the folder name, e.g. models, services, utils, etc.'),
-      relativeFolderPath,
-      (path) =>
-        !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
-          ? l10n.t(
-              'The folder name is invalid! Please enter a valid folder name',
-            )
-          : undefined,
-    )
+    const skipFolderConfirmation = this.config.skipFolderConfirmation
+    let folderName: string | undefined
 
-    if (!folderName) {
-      return
+    if (!folderPath || !skipFolderConfirmation) {
+      folderName = await getPath(
+        l10n.t('Enter the folder name where the file will be created'),
+        l10n.t('Enter the folder name, e.g. models, services, utils, etc.'),
+        relativeFolderPath,
+        (path) =>
+          !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
+            ? l10n.t(
+                'The folder name is invalid! Please enter a valid folder name',
+              )
+            : undefined,
+      )
+
+      if (!folderName) {
+        return
+      }
+    } else {
+      folderName = relativeFolderPath
     }
 
     const componentName = await getName(
@@ -433,21 +440,27 @@ const { text } = Astro.props;
       showError(message)
       return
     }
+    const skipFolderConfirmation = this.config.skipFolderConfirmation
+    let folderName: string | undefined
 
-    const folderName = await getPath(
-      l10n.t('Enter the folder name where the file will be created'),
-      l10n.t('Enter the folder name, e.g. models, services, utils, etc.'),
-      relativeFolderPath,
-      (path) =>
-        !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
-          ? l10n.t(
-              'The folder name is invalid! Please enter a valid folder name',
-            )
-          : undefined,
-    )
+    if (!folderPath || !skipFolderConfirmation) {
+      folderName = await getPath(
+        l10n.t('Enter the folder name where the file will be created'),
+        l10n.t('Enter the folder name, e.g. models, services, utils, etc.'),
+        relativeFolderPath,
+        (path) =>
+          !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
+            ? l10n.t(
+                'The folder name is invalid! Please enter a valid folder name',
+              )
+            : undefined,
+      )
 
-    if (!folderName) {
-      return
+      if (!folderName) {
+        return
+      }
+    } else {
+      folderName = relativeFolderPath
     }
 
     const items = customComponents.map((item: any) => {

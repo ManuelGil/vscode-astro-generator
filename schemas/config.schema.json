@@ -32,6 +32,12 @@
 			"scope": "resource",
 			"description": "Show the path of the file in the name of the list of generated files"
 		},
+		"astroGenerator.files.skipFolderConfirmation": {
+			"type": "boolean",
+			"default": false,
+			"scope": "resource",
+			"description": "Skip the destination folder confirmation when generating files"
+		},
 		"astroGenerator.formatting.headerCommentTemplate": {
 			"type": "array",
 			"default": [],

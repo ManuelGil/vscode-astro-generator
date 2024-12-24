@@ -7,11 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-12-24
+
+### Added
+
+- Add `fileGenerator.skipFolderConfirmation` settings to skip the folder confirmation when generating a file
+
 ## [1.0.0] - 2024-12-22
 
 ### Added
 
 - Initial release of the extension.
 
-[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ManuelGil/vscode-astro-generator/releases/tag/v1.0.0

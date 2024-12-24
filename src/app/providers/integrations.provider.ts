@@ -160,6 +160,11 @@ export class IntegrationsProvider implements WebviewViewProvider {
       <aside x-html="integrationsSection"></aside>
     </div>
     <script nonce="${nonce}" src="${scriptUri}" defer></script>
+    <script nonce="${nonce}">
+      window.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+      }, { capture: true });
+    </script>
   </body>
 </html>
 `

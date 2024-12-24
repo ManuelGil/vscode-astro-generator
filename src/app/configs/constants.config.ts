@@ -186,6 +186,18 @@ export const EXCLUDE: string[] = [
 export const SHOW_PATH: boolean = true
 
 /**
+ * SKIP_FOLDER_CONFIRMATION: Whether to skip the folder confirmation or not.
+ * @type {boolean}
+ * @public
+ * @memberof Constants
+ * @example
+ * console.log(SKIP_FOLDER_CONFIRMATION);
+ *
+ * @returns {boolean} - Whether to skip the folder confirmation or not
+ */
+export const SKIP_FOLDER_CONFIRMATION: boolean = false
+
+/**
  * TEMPLATES: The header comment template to generate.
  * @type {string[]}
  * @public
