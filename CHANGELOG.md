@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-01-10
+
+### Changed
+
+- Enhance integrations with new entries in the astro integrations list
+
 ## [1.1.0] - 2024-12-24
 
 ### Added
@@ -19,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the extension.
 
-[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ManuelGil/vscode-astro-generator/releases/tag/v1.0.0

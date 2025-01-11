@@ -406,7 +406,7 @@ export const integrations = [
   {
     name: 'astro-html-beautifier',
     description: 'Beautify HTML fileson astro final bundle with js-beautify',
-    category: ['Frameworks', 'CSS + UI'],
+    category: ['Frameworks', 'CSS + UI', 'Performance + SEO'],
     installation: [
       {
         type: 'npm',
@@ -417,7 +417,7 @@ export const integrations = [
   {
     name: 'astro-opengraph-images',
     description: 'Generate Open Graph images for your Astro site',
-    category: ['Frameworks'],
+    category: ['Frameworks', 'Performance + SEO'],
     installation: [
       {
         type: 'npm',
@@ -439,7 +439,7 @@ export const integrations = [
   {
     name: '@astro-aws/adapter',
     description: 'An adapter for deploying an Astro application to AWS Lambda',
-    category: ['Frameworks', 'Adapters'],
+    category: ['Frameworks', 'Adapters', 'Performance + SEO'],
     installation: [
       {
         type: 'npm',
@@ -1336,6 +1336,65 @@ export const integrations = [
     ],
   },
   {
+    name: '@astro-reactive/form',
+    description: 'The Reactive Form component for Astro 🔥',
+    category: ['CSS + UI'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npm install @astro-reactive/form',
+      },
+    ],
+  },
+  {
+    name: '@grucloud/bau-astro',
+    description: 'Use Bau within Astro',
+    category: ['CSS + UI'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npm install @grucloud/bau-astro',
+      },
+    ],
+  },
+  {
+    name: 'astro-critters-slim',
+    description: '🦔 Minimal Critters integration for astro.js',
+    category: ['CSS + UI', 'Performance + SEO'],
+    icon: 'https://astro.build/assets/integrations/astro-critters-slim.webp',
+    installation: [
+      {
+        type: 'npm',
+        command: 'npx astro add astro-critters-slim',
+      },
+    ],
+  },
+  {
+    name: '@appzic/astro-reset-css',
+    description: 'Astro Component for CSS reset like tailwind base',
+    category: ['CSS + UI'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npm install @appzic/astro-reset-css',
+      },
+    ],
+  },
+  {
+    name: 'astro-mdx-code-blocks',
+    description:
+      'An easy way to customize the syntax highlighting of MDX fenced code blocks by providing your own Astro component.',
+    category: ['CSS + UI'],
+    icon: 'https://astro.build/assets/integrations/astro-mdx-code-blocks.png',
+    installation: [
+      {
+        type: 'npm',
+        command:
+          'npm install -D astro-mdx-code-blocks astro-auto-import @astrojs/mdx',
+      },
+    ],
+  },
+  {
     name: 'astro-seo',
     description: 'Makes it easy to add SEO relevant tags to your Astro app.',
     category: ['Performance + SEO'],
@@ -1660,6 +1719,18 @@ export const integrations = [
     ],
   },
   {
+    name: 'astro-link-card',
+    description:
+      'Astro integration to automatically convert bare links into link cards.',
+    category: ['Performance + SEO'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npx astro add astro-link-card',
+      },
+    ],
+  },
+  {
     name: 'astro-seo-metadata',
     description:
       'Bare minimum SEO meta tags to make most social networks and Google engine happy.',
@@ -1668,6 +1739,53 @@ export const integrations = [
       {
         type: 'pnpm',
         command: 'pnpm i astro-seo-metadata',
+      },
+    ],
+  },
+  {
+    name: 'astro-redirect-from',
+    description:
+      "🎯 Set redirect urls in your frontmatter within your Astro site's Markdown files. Mimics the behavior of jekyll-redirect-from.",
+    category: ['Performance + SEO'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npx astro add astro-redirect-from',
+      },
+    ],
+  },
+  {
+    name: 'astro-helmet',
+    description: 'A document head manager for astro.',
+    category: ['Performance + SEO'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npm install astro-helmet',
+      },
+    ],
+  },
+  {
+    name: 'og-images-generator',
+    description:
+      'Generate OG images from a static folder and / or a middleware. Extract metadata from HTML pages. No headless browser involved. Comes as a CLI, API or plugins.',
+    category: ['Performance + SEO'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npm install og-images-generator',
+      },
+    ],
+  },
+  {
+    name: 'astro-remove-whitespace',
+    description:
+      'Astro integration that removes whitespace between HTML tags in build output',
+    category: ['Performance + SEO'],
+    installation: [
+      {
+        type: 'npm',
+        command: 'npm install astro-remove-whitespace',
       },
     ],
   },
@@ -1774,7 +1892,7 @@ export const integrations = [
   {
     name: '@codecov/astro-plugin',
     description: 'Official Codecov Astro Plugin',
-    category: ['Analytics'],
+    category: ['Analytics', 'Performance + SEO'],
     installation: [
       {
         type: 'npm',
@@ -1929,7 +2047,7 @@ export const integrations = [
     name: 'astro-nanointl',
     description:
       'Tiny set of tools to implement internationalization for Astro',
-    category: ['Accessibility'],
+    category: ['Accessibility', 'Performance + SEO'],
     installation: [
       {
         type: 'npm',
