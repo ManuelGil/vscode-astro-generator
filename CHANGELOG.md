@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-03-10
+
+### Added
+
+- Add `vscode-marketplace-client` dependency to check for extension updates and display a notification
+
+### Changed
+
+- Update the `extension.ts` file to use the new `vscode-marketplace-client` dependency
+- Update Localization strings for the extension
+
 ## [1.2.0] - 2025-01-10
 
 ### Changed
@@ -25,7 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the extension.
 
-[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.2.0...HEAD
+[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ManuelGil/vscode-astro-generator/releases/tag/v1.0.0
