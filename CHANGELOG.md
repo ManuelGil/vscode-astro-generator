@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-07-14
+
+### Changed
+
+- Update funding options to "Buy Me a Coffee" and "GitHub Sponsors"
+- Enhance localization strings for better user experience
+- Improve providers' disposal methods to ensure proper cleanup
+- Upgrade dependencies to the latest versions for better performance and security
+
 ## [1.3.0] - 2025-03-10
 
 ### Added
@@ -36,7 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the extension.
 
-[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.3.0...HEAD
+[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.0.0...v1.1.0

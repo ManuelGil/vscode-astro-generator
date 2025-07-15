@@ -1,5 +1,6 @@
 import {
   CancellationToken,
+  Disposable,
   Uri,
   Webview,
   WebviewView,
@@ -51,6 +52,24 @@ export class IntegrationsProvider implements WebviewViewProvider {
    */
   private _view?: WebviewView
 
+  /**
+   * The disposables.
+   *
+   * @private
+   * @memberof IntegrationsProvider
+   * @type {Disposable[]}
+   */
+  private _disposables: Disposable[] = []
+
+  /**
+   * Indicates whether the provider is disposed.
+   *
+   * @private
+   * @memberof IntegrationsProvider
+   * @type {boolean}
+   */
+  private _isDisposed: boolean = false
+
   // -----------------------------------------------------------------
   // Constructor
   // -----------------------------------------------------------------
@@ -100,9 +119,35 @@ export class IntegrationsProvider implements WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview)
 
-    webviewView.webview.onDidReceiveMessage((data) => {
+    const disposable = webviewView.webview.onDidReceiveMessage((data) => {
       TerminalController.installIntegrationPackage(data)
     })
+
+    this._disposables.push(disposable)
+  }
+
+  /**
+   * Dispose method to clean up resources.
+   *
+   * @public
+   * @memberof IntegrationsProvider
+   */
+  public dispose(): void {
+    if (this._isDisposed) {
+      return
+    }
+
+    this._disposables.forEach((disposable) => {
+      try {
+        disposable.dispose()
+      } catch (error) {
+        console.error('Error disposing disposable:', error)
+      }
+    })
+
+    this._disposables = []
+    this._view = undefined
+    this._isDisposed = true
   }
 
   // Private methods

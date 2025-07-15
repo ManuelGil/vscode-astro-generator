@@ -203,7 +203,8 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     })
   } catch (error) {
-    console.error('Error retrieving extension version:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error(`Error retrieving extension version: ${errorMessage}`)
   }
 
   // -----------------------------------------------------------------
@@ -255,8 +256,12 @@ export async function activate(context: vscode.ExtensionContext) {
   // Register FilesProvider and ListMethodsProvider events
   // -----------------------------------------------------------------
 
-  vscode.workspace.onDidSaveTextDocument(() => {
-    listComponentsProvider.refresh()
+  vscode.workspace.onDidSaveTextDocument((document) => {
+    const fileExtension = document.fileName.split('.').pop()?.toLowerCase()
+
+    if (fileExtension && config.include.includes(fileExtension)) {
+      listComponentsProvider.refresh()
+    }
   })
 
   // -----------------------------------------------------------------
@@ -305,12 +310,12 @@ export async function activate(context: vscode.ExtensionContext) {
   // -----------------------------------------------------------------
 
   // Create a new IntegrationsProvider
-  const intregationsProvider = new IntegrationsProvider(context.extensionUri)
+  const integrationsProvider = new IntegrationsProvider(context.extensionUri)
 
   // Register the IntegrationsProvider
   const integrationsWebviewProvider = vscode.window.registerWebviewViewProvider(
     IntegrationsProvider.viewType,
-    intregationsProvider,
+    integrationsProvider,
   )
 
   context.subscriptions.push(integrationsWebviewProvider)

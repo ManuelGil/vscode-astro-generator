@@ -49,6 +49,37 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
     NodeModel | undefined | null | void
   >
 
+  /**
+   * Indicates whether the provider has been disposed.
+   * @type {boolean}
+   * @private
+   * @memberof ListComponentsProvider
+   * @example
+   * this._isDisposed = false;
+   */
+  private _isDisposed = false
+
+  /**
+   * The cached nodes.
+   * @type {NodeModel[] | undefined}
+   * @private
+   * @memberof ListComponentsProvider
+   * @example
+   * this._cachedNodes = undefined;
+   */
+  private _cachedNodes: NodeModel[] | undefined = undefined
+
+  /**
+   * The cache promise.
+   * @type {Promise<NodeModel[] | undefined> | undefined}
+   * @private
+   * @memberof ListComponentsProvider
+   * @example
+   * this._cachePromise = undefined;
+   */
+  private _cachePromise: Promise<NodeModel[] | undefined> | undefined =
+    undefined
+
   // Public properties
   /**
    * The onDidChangeTreeData event.
@@ -123,7 +154,21 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
       return element.children
     }
 
-    return this.getListComponents()
+    if (this._cachedNodes) {
+      return this._cachedNodes
+    }
+
+    if (this._cachePromise) {
+      return this._cachePromise
+    }
+
+    this._cachePromise = this.getListComponents().then((nodes) => {
+      this._cachedNodes = nodes
+      this._cachePromise = undefined
+      return nodes
+    })
+
+    return this._cachePromise
   }
 
   /**
@@ -138,7 +183,33 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    * @returns {void} - No return value
    */
   refresh(): void {
+    this._cachedNodes = undefined
+    this._cachePromise = undefined
     this._onDidChangeTreeData.fire()
+  }
+
+  /**
+   * Disposes the provider.
+   *
+   * @function dispose
+   * @public
+   * @memberof ListComponentsProvider
+   * @example
+   * provider.dispose();
+   *
+   * @returns {void} - No return value
+   */
+  dispose(): void {
+    this._onDidChangeTreeData.dispose()
+    if (this._isDisposed) {
+      return
+    }
+
+    this._isDisposed = true
+
+    if (this._onDidChangeTreeData) {
+      this._onDidChangeTreeData.dispose()
+    }
   }
 
   // Private methods
@@ -160,38 +231,42 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
       return
     }
 
-    for (const file of files) {
-      const document = await workspace.openTextDocument(
-        file.resourceUri?.path ?? '',
-      )
+    // Iterate through each file and extract components
+    await Promise.all(
+      files.map(async (file) => {
+        const docPath = file.resourceUri?.path ?? ''
 
-      const children = Array.from(
-        { length: document.lineCount },
-        (_, index) => {
+        if (!docPath) {
+          return
+        }
+
+        let document
+
+        try {
+          document = await workspace.openTextDocument(docPath)
+        } catch (err) {
+          return
+        }
+
+        // Use a regex to find components in the document
+        const componentRegex = /<([A-Z][\w]*)\b/g
+        const children: NodeModel[] = []
+
+        for (let index = 0; index < document.lineCount; index++) {
           const line = document.lineAt(index)
-
-          let node: NodeModel | undefined
-
-          if (line.text.match(/\s<[A-Z]+[a-z]+/g)) {
-            node = new NodeModel(
-              line.text.trim(),
-              new ThemeIcon('symbol-method'),
-              {
+          if (componentRegex.test(line.text)) {
+            children.push(
+              new NodeModel(line.text.trim(), new ThemeIcon('symbol-method'), {
                 command: `${EXTENSION_ID}.list.gotoLine`,
                 title: line.text,
                 arguments: [file.resourceUri, index],
-              },
+              }),
             )
           }
-
-          return node
-        },
-      )
-
-      file.setChildren(
-        children.filter((child) => child !== undefined) as NodeModel[],
-      )
-    }
+        }
+        file.setChildren(children)
+      }),
+    )
 
     const nodes = files.filter(
       (file) => file.children && file.children.length !== 0,
