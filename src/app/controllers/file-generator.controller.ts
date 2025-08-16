@@ -1,15 +1,9 @@
-import { access, existsSync, mkdirSync, open, writeFile } from 'fs'
+import { access, existsSync, mkdirSync, writeFile } from 'fs'
 import { dirname, join } from 'path'
-import { Uri, WorkspaceFolder, commands, l10n, window, workspace } from 'vscode'
+import { Uri, WorkspaceFolder, l10n, window, workspace } from 'vscode'
 
 import { EXTENSION_DISPLAY_NAME, ExtensionConfig } from '../configs'
-import {
-  getName,
-  getPath,
-  showError,
-  showMessage,
-  showWarning,
-} from '../helpers'
+import { getName, getPath, showError, showMessage } from '../helpers'
 
 /**
  * The FileGeneratorController class.
@@ -201,12 +195,8 @@ const posts = [
    */
   async generatePageWithGetStaticProps(folderPath?: Uri): Promise<void> {
     const template = `---
-export async function getStaticProps() {
-  const data = await fetch("https://api.example.com/data").then((res) => res.json());
-  return { props: { data } };
-}
-
-const { data } = Astro.props;
+const response = await fetch("https://api.example.com/data")
+const data = await response.json()
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -337,10 +327,8 @@ const { text } = Astro.props;
     }
 
     if (!workspaceFolder) {
-      const message = l10n.t(
-        'The workspace folder does not exist. Please select a valid workspace folder to use',
-      )
-      showError(message)
+      // User likely canceled the picker
+      showMessage(l10n.t('Operation canceled'))
       return
     }
 
@@ -350,7 +338,7 @@ const { text } = Astro.props;
     if (!folderPath || !skipFolderConfirmation) {
       folderName = await getPath(
         l10n.t('Enter the folder name where the file will be created'),
-        l10n.t('Enter the folder name, e.g. models, services, utils, etc.'),
+        l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
         relativeFolderPath,
         (path) =>
           !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
@@ -361,6 +349,7 @@ const { text } = Astro.props;
       )
 
       if (!folderName) {
+        showMessage(l10n.t('Operation canceled'))
         return
       }
     } else {
@@ -369,7 +358,7 @@ const { text } = Astro.props;
 
     const componentName = await getName(
       l10n.t('Enter the component name'),
-      l10n.t('Enter the component name, e.g. User, Product, Order, etc.'),
+      l10n.t('Enter the component name, e.g. User, Product, Order, etc'),
       (name) =>
         !/^[a-zA-Z\-]+?$/.test(name)
           ? l10n.t('The component name is invalid! Please enter a valid name')
@@ -377,6 +366,7 @@ const { text } = Astro.props;
     )
 
     if (!componentName) {
+      showMessage(l10n.t('Operation canceled'))
       return
     }
 
@@ -434,19 +424,18 @@ const { text } = Astro.props;
     }
 
     if (!workspaceFolder) {
-      const message = l10n.t(
-        'The workspace folder does not exist. Please select a valid workspace folder to use',
-      )
-      showError(message)
+      // User likely canceled the picker
+      showMessage(l10n.t('Operation canceled'))
       return
     }
+
     const skipFolderConfirmation = this.config.skipFolderConfirmation
     let folderName: string | undefined
 
     if (!folderPath || !skipFolderConfirmation) {
       folderName = await getPath(
         l10n.t('Enter the folder name where the file will be created'),
-        l10n.t('Enter the folder name, e.g. models, services, utils, etc.'),
+        l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
         relativeFolderPath,
         (path) =>
           !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
@@ -457,12 +446,16 @@ const { text } = Astro.props;
       )
 
       if (!folderName) {
+        showMessage(l10n.t('Operation canceled'))
         return
       }
     } else {
       folderName = relativeFolderPath
     }
 
+    // Build quick pick items for user selection. Note: the `extension`
+    // field must NOT include a leading dot. The generator constructs
+    // filenames as `${ComponentName}.${extension}`.
     const items = customComponents.map((item: any) => {
       return {
         label: item.name,
@@ -478,12 +471,13 @@ const { text } = Astro.props;
     })
 
     if (option === undefined) {
+      showMessage(l10n.t('Operation canceled'))
       return
     }
 
     const componentName = await getName(
       l10n.t('Enter the component name'),
-      l10n.t('Enter the component name, e.g. User, Product, Order, etc.'),
+      l10n.t('Enter the component name, e.g. User, Product, Order, etc'),
       (name) =>
         !/^[a-zA-Z\-]+?$/.test(name)
           ? l10n.t('The component name is invalid! Please enter a valid name')
@@ -491,6 +485,7 @@ const { text } = Astro.props;
     )
 
     if (!componentName) {
+      showMessage(l10n.t('Operation canceled'))
       return
     }
 
@@ -509,6 +504,7 @@ const { text } = Astro.props;
     const componentTemplate = template.template.join('\n')
 
     const resolvedFolderPath = join(workspaceFolder.uri.fsPath, folderName)
+    // Compose filename with extension (no leading dot expected in config)
     const fileName = `${componentName}.${template.extension}`
     const content = this.fileContent(componentName, componentTemplate)
 
@@ -534,6 +530,8 @@ const { text } = Astro.props;
 
     let content: string = ''
 
+    // Prepend configured header comment (if any). This is applied only
+    // at generation time; there is no on-save formatter integration.
     if (headerCommentTemplate.length > 0) {
       content += headerCommentTemplate.join('\n') + '\n\n'
     }
@@ -541,7 +539,7 @@ const { text } = Astro.props;
     // Add the template
     content += template.replace(/{{ComponentName}}/g, componentName)
 
-    // Add a final newline
+    // Optionally append a final newline if configured
     if (insertFinalNewline) {
       content += '\n'
     }
@@ -578,8 +576,9 @@ const { text } = Astro.props;
 
     access(file, (err: any) => {
       if (err) {
-        open(file, 'w+', (err: any, fd: any) => {
-          if (err) {
+        // File does not exist: write directly to path (no fd to manage)
+        writeFile(file, fileContent, 'utf8', (writeErr: any) => {
+          if (writeErr) {
             const message = l10n.t(
               'The file has not been created! Please try again',
             )
@@ -587,32 +586,28 @@ const { text } = Astro.props;
             return
           }
 
-          writeFile(fd, fileContent, 'utf8', (err: any) => {
-            if (err) {
-              const message = l10n.t(
-                'The {0} has been created successfully',
-                fileName,
-              )
-              showError(message)
-              return
-            }
-
-            const openPath = Uri.file(file)
-
-            workspace.openTextDocument(openPath).then(async (filename) => {
-              await commands.executeCommand('workbench.action.files.saveAll')
-              await window.showTextDocument(filename)
-            })
+          const openPath = Uri.file(file)
+          workspace.openTextDocument(openPath).then(async (doc) => {
+            await window.showTextDocument(doc)
           })
-        })
 
-        const message = l10n.t('File created successfully!')
-        showMessage(message)
+          const message = l10n.t('File created successfully!')
+          showMessage(message)
+        })
       } else {
+        // File exists: offer to open it
         const message = l10n.t(
           'The file name already exists! Please enter a different name',
         )
-        showWarning(message)
+        const openLabel = l10n.t('Open File')
+        window.showWarningMessage(message, openLabel).then((action) => {
+          if (action === openLabel) {
+            const openPath = Uri.file(file)
+            workspace
+              .openTextDocument(openPath)
+              .then((doc) => window.showTextDocument(doc))
+          }
+        })
       }
     })
   }

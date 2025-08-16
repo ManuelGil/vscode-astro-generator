@@ -12,7 +12,7 @@
 	"astroGenerator.file.generateBasicComponent": "Generar un Componente Básico",
 	"astroGenerator.file.generateLayoutWithSlots": "Generar un Diseño con Slots",
 	"astroGenerator.file.generateStaticDataPage": "Generar una Página de Datos Estáticos",
-	"astroGenerator.file.generatePageWithGetStaticProps": "Generar una Página con getStaticProps",
+	"astroGenerator.file.generatePageWithGetStaticProps": "Generar una Página con Datos Asíncronos",
 	"astroGenerator.file.generateStyledComponent": "Generar un Componente Estilizado",
 	"astroGenerator.file.generateCustomComponent": "Generar un Componente Personalizado",
 	"viewsWelcome.astroGenerator.listFilesView": "Para capturar archivos de forma efectiva, asegúrese de incluir la forma plural del tipo de archivo en la configuración del espacio de trabajo.\n[Abrir archivo de configuración del espacio de trabajo](command:workbench.action.openWorkspaceSettingsFile)\nPara obtener más información sobre cómo usar Astro File Generator para VS Code [lea nuestra documentación](https://github.com/ManuelGil/vscode-astro-generator).",

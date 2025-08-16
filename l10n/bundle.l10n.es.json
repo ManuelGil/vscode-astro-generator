@@ -1,6 +1,7 @@
 {
 	"No workspace folders are open. Please open a workspace folder to use this extension": "No hay carpetas de espacio de trabajo abiertas. Abre una carpeta de espacio de trabajo para usar esta extensión",
 	"Select a workspace folder to use. This folder will be used to load workspace-specific configuration for the extension": "Selecciona una carpeta de espacio de trabajo. Esa carpeta se usará para cargar la configuración específica de la extensión",
+    "Select a workspace folder to use": "Selecciona una carpeta de espacio de trabajo",
 	"The {0} extension is now enabled and ready to use": "La extensión {0} está habilitada y lista para usarse",
 	"The {0} extension is now disabled": "La extensión {0} está deshabilitada",
 	"The {0} extension is disabled in settings. Enable it to use its features": "La extensión {0} está deshabilitada en la configuración. Habilítala para usar sus funciones",
@@ -31,5 +32,11 @@
 	"The {0} has been created successfully": "El {0} se ha creado correctamente",
 	"File created successfully!": "¡Archivo creado correctamente!",
 	"The file name already exists! Please enter a different name": "¡El nombre del archivo ya existe! Por favor, introduce un nombre diferente",
-	"Select a package manager to install the {0} integration": "Selecciona un administrador de paquetes para instalar la integración {0}"
+    "Open File": "Abrir archivo",
+	"Select a package manager to install the {0} integration": "Selecciona un administrador de paquetes para instalar la integración {0}",
+	"Using workspace folder: {0}": "Usando carpeta de espacio de trabajo: {0}",
+    "Switched to workspace folder: {0}": "Se cambió a la carpeta del espacio de trabajo: {0}",
+	"{0} is disabled in settings. Enable it to use its features": "{0} está deshabilitado en la configuración. Habilítalo para usar sus funciones",
+	"Failed to check for new version of the extension": "No se pudo verificar si hay una nueva versión de la extensión",
+    "Operation canceled": "Operación cancelada"
 }

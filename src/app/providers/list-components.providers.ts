@@ -1,3 +1,4 @@
+import pLimit from 'p-limit'
 import {
   Event,
   EventEmitter,
@@ -222,56 +223,78 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    * @example
    * const files = provider.getListComponents();
    *
-   * @returns {Promise<NodeModel[] | undefined>} - The list of files
+   * @returns {Promise<NodeModel[]>} - The list of files
    */
-  private async getListComponents(): Promise<NodeModel[] | undefined> {
+  private async getListComponents(): Promise<NodeModel[]> {
     const files = await ListFilesController.getFiles()
 
     if (!files) {
-      return
+      return []
     }
 
-    // Iterate through each file and extract components
+    const componentRegex = /<([A-Z][A-Za-z0-9_]*)\b/g
+    const limit = pLimit(2)
+
     await Promise.all(
-      files.map(async (file) => {
-        const docPath = file.resourceUri?.path ?? ''
-
-        if (!docPath) {
-          return
-        }
-
-        let document
-
-        try {
-          document = await workspace.openTextDocument(docPath)
-        } catch (err) {
-          return
-        }
-
-        // Use a regex to find components in the document
-        const componentRegex = /<([A-Z][\w]*)\b/g
-        const children: NodeModel[] = []
-
-        for (let index = 0; index < document.lineCount; index++) {
-          const line = document.lineAt(index)
-          if (componentRegex.test(line.text)) {
-            children.push(
-              new NodeModel(line.text.trim(), new ThemeIcon('symbol-method'), {
-                command: `${EXTENSION_ID}.list.gotoLine`,
-                title: line.text,
-                arguments: [file.resourceUri, index],
-              }),
-            )
+      files.map((file) =>
+        limit(async () => {
+          if (!file.resourceUri) {
+            file.setChildren([])
+            return
           }
-        }
-        file.setChildren(children)
-      }),
+
+          try {
+            const document = await workspace.openTextDocument(
+              file.resourceUri.fsPath,
+            )
+            const fullText = document.getText()
+            const children: NodeModel[] = []
+
+            const lines = fullText.split(/\r?\n/)
+
+            for (let i = 0; i < lines.length; i++) {
+              const text = lines[i]
+
+              const trimmed = text.trim()
+              if (
+                trimmed.startsWith('//') ||
+                trimmed.startsWith('/*') ||
+                trimmed.startsWith('*')
+              ) {
+                continue
+              }
+
+              let match: RegExpExecArray | null
+              componentRegex.lastIndex = 0
+              while ((match = componentRegex.exec(text)) !== null) {
+                const componentName = match[1]
+                if (!componentName) {
+                  continue
+                }
+
+                children.push(
+                  new NodeModel(trimmed, new ThemeIcon('symbol-method'), {
+                    command: `${EXTENSION_ID}.list.gotoLine`,
+                    title: trimmed,
+                    arguments: [file.resourceUri, i],
+                  }),
+                )
+              }
+            }
+
+            file.setChildren(children)
+          } catch (err) {
+            console.error(
+              `Error reading file ${file.resourceUri?.fsPath}:`,
+              err instanceof Error ? err.message : String(err),
+            )
+
+            file.setChildren([])
+          }
+        }),
+      ),
     )
 
-    const nodes = files.filter(
-      (file) => file.children && file.children.length !== 0,
-    )
-
-    return nodes.length > 0 ? nodes : undefined
+    return files.filter((file) => file.children?.length! > 0)
   }
 }
