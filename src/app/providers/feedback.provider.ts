@@ -163,16 +163,12 @@ export class FeedbackProvider implements TreeDataProvider<NodeModel> {
    * @returns {void} - No return value
    */
   dispose(): void {
-    this._onDidChangeTreeData.dispose()
     if (this._isDisposed) {
       return
     }
 
     this._isDisposed = true
-
-    if (this._onDidChangeTreeData) {
-      this._onDidChangeTreeData.dispose()
-    }
+    this._onDidChangeTreeData.dispose()
   }
 
   // Private methods
@@ -190,19 +186,19 @@ export class FeedbackProvider implements TreeDataProvider<NodeModel> {
   private getFeedbacks(): NodeModel[] {
     return [
       new NodeModel(l10n.t('Report Issues'), new ThemeIcon('bug'), {
-        title: 'Report Issues',
+        title: l10n.t('Report Issues'),
         command: `${EXTENSION_ID}.feedback.reportIssues`,
       }),
       new NodeModel(l10n.t('Rate Us'), new ThemeIcon('star'), {
-        title: 'Rate Us',
+        title: l10n.t('Rate Us'),
         command: `${EXTENSION_ID}.feedback.rateUs`,
       }),
       new NodeModel(l10n.t('Follow Us'), new ThemeIcon('twitter'), {
-        title: 'Follow Us',
+        title: l10n.t('Follow Us'),
         command: `${EXTENSION_ID}.feedback.followUs`,
       }),
       new NodeModel(l10n.t('Support Us'), new ThemeIcon('heart'), {
-        title: 'Support Us',
+        title: l10n.t('Support Us'),
         command: `${EXTENSION_ID}.feedback.supportUs`,
       }),
     ]

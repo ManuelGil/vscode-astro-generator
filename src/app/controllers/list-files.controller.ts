@@ -1,4 +1,5 @@
 import {
+  l10n,
   Position,
   Range,
   Selection,
@@ -10,7 +11,8 @@ import {
 } from 'vscode'
 
 import { EXTENSION_ID, ExtensionConfig } from '../configs'
-import { directoryMap, getRelativePath } from '../helpers'
+import { type FindFilesOptions, findFiles } from '../helpers/find-files.helper'
+import { relativePath } from '../helpers/relative-path.helper'
 import { NodeModel } from '../models'
 
 /**
@@ -77,49 +79,86 @@ export class ListFilesController {
   static async getFiles(
     maxResults: number = Number.MAX_SAFE_INTEGER,
   ): Promise<NodeModel[] | void> {
-    // Get the files in the folder
-    const files = await directoryMap('/', {
-      extensions: this.config.include,
-      ignore: this.config.exclude,
-      maxResults,
-    })
-
-    if (files.length !== 0) {
-      let nodes: NodeModel[] = []
-
-      files.sort((a, b) => a.path.localeCompare(b.path))
-
-      for (const file of files) {
-        const document = await workspace.openTextDocument(file)
-
-        const path = await getRelativePath(document.fileName)
-        let filename = path.split('/').pop()
-
-        if (filename && this.config.showPath) {
-          const folder = path.split('/').slice(0, -1).join('/')
-
-          filename += folder ? ` (${folder})` : ' (root)'
-        }
-
-        nodes.push(
-          new NodeModel(
-            filename ?? 'Untitled',
-            new ThemeIcon('file'),
-            {
-              command: `${EXTENSION_ID}.list.openFile`,
-              title: 'Open File',
-              arguments: [document.uri],
-            },
-            document.uri,
-            document.fileName,
-          ),
-        )
+    try {
+      // Get the workspace folder
+      const workspaceFolder = workspace.workspaceFolders?.[0]
+      if (!workspaceFolder) {
+        return
       }
 
-      return nodes
-    }
+      // Prepare options for findFiles helper
+      const findFilesOptions: FindFilesOptions = {
+        baseDirectoryPath: workspaceFolder.uri.fsPath,
+        includeFilePatterns: this.config.include.map(
+          (ext) => `**/*${ext.startsWith('.') ? '' : '.'}${ext}`,
+        ),
+        excludedPatterns: this.config.exclude,
+        enableGitignoreDetection: true,
+      }
 
-    return
+      // Get the files using the findFiles helper
+      const fileUris = await findFiles(findFilesOptions)
+
+      if (fileUris.length !== 0) {
+        let nodes: NodeModel[] = []
+
+        // Limit results if needed
+        const limitedFiles = fileUris.slice(0, maxResults)
+
+        // Sort files by path
+        limitedFiles.sort((a, b) => a.fsPath.localeCompare(b.fsPath))
+
+        for (const fileUri of limitedFiles) {
+          try {
+            const document = await workspace.openTextDocument(fileUri)
+
+            const relativeFilePath = relativePath(
+              document.uri,
+              this.config.showPath,
+            )
+            let displayFilename = relativeFilePath.split('/').pop()
+
+            if (displayFilename && this.config.showPath) {
+              const containingFolderPath = relativeFilePath
+                .split('/')
+                .slice(0, -1)
+                .join('/')
+
+              displayFilename += containingFolderPath
+                ? ` (${containingFolderPath})`
+                : ' (root)'
+            }
+
+            nodes.push(
+              new NodeModel(
+                displayFilename ?? 'Untitled',
+                new ThemeIcon('file'),
+                {
+                  command: `${EXTENSION_ID}.list.openFile`,
+                  title: 'Open File',
+                  arguments: [document.uri],
+                },
+                document.uri,
+                document.fileName,
+              ),
+            )
+          } catch (docError) {
+            console.warn(
+              `Failed to open document for ${fileUri.fsPath}:`,
+              docError,
+            )
+          }
+        }
+
+        return nodes
+      }
+
+      return
+    } catch (error) {
+      console.error('Error in getFiles:', error)
+      window.showErrorMessage(l10n.t('Failed to get files'))
+      return
+    }
   }
 
   /**
@@ -134,10 +173,14 @@ export class ListFilesController {
    *
    * @returns {Promise<void>} - The promise
    */
-  openFile(uri: Uri) {
-    workspace.openTextDocument(uri).then((filename) => {
-      window.showTextDocument(filename)
-    })
+  async openFile(uri: Uri): Promise<void> {
+    try {
+      const document = await workspace.openTextDocument(uri)
+      await window.showTextDocument(document)
+    } catch (error: unknown) {
+      console.error('Error opening file:', error)
+      window.showErrorMessage(l10n.t('Failed to open file'))
+    }
   }
 
   /**
@@ -153,16 +196,19 @@ export class ListFilesController {
    *
    * @returns {void} - The promise
    */
-  gotoLine(uri: Uri, line: number) {
-    workspace.openTextDocument(uri).then((document) => {
-      window.showTextDocument(document).then((editor) => {
-        const pos = new Position(line, 0)
-        editor.revealRange(
-          new Range(pos, pos),
-          TextEditorRevealType.InCenterIfOutsideViewport,
-        )
-        editor.selection = new Selection(pos, pos)
-      })
-    })
+  async gotoLine(uri: Uri, line: number): Promise<void> {
+    try {
+      const document = await workspace.openTextDocument(uri)
+      const editor = await window.showTextDocument(document)
+      const targetPosition = new Position(line, 0)
+      editor.revealRange(
+        new Range(targetPosition, targetPosition),
+        TextEditorRevealType.InCenterIfOutsideViewport,
+      )
+      editor.selection = new Selection(targetPosition, targetPosition)
+    } catch (error: unknown) {
+      console.error('Error navigating to line:', error)
+      window.showErrorMessage(l10n.t('Failed to go to line'))
+    }
   }
 }

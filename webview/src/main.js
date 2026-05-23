@@ -1,10 +1,10 @@
-import Alpine from 'alpinejs';
-import { IntegrationsSection } from './components/IntegrationsSection';
-import { SearchFilter } from './components/searchFilter';
-import { integrations } from './data/integrations';
-import './style.css';
+import Alpine from 'alpinejs'
+import { IntegrationsSection } from './components/IntegrationsSection'
+import { SearchFilter } from './components/SearchFilter'
+import { integrations } from './data/integrations'
+import './style.css'
 
-const vscode = acquireVsCodeApi();
+const vscode = acquireVsCodeApi()
 
 document.addEventListener('alpine:init', () => {
   Alpine.data('integrations', () => ({
@@ -28,7 +28,7 @@ document.addEventListener('alpine:init', () => {
 
     get filteredIntegrations() {
       if (!this.searchQuery) {
-        return this.integrations;
+        return this.integrations
       }
 
       return this.integrations.filter((integration) => {
@@ -38,24 +38,24 @@ document.addEventListener('alpine:init', () => {
             .includes(this.searchQuery.toLowerCase()) ||
           integration.description
             .toLowerCase()
-            .includes(this.searchQuery.toLowerCase());
+            .includes(this.searchQuery.toLowerCase())
 
-        return matchesSearch;
-      });
+        return matchesSearch
+      })
     },
 
     filteredIntegrationsByCategory(category) {
       return this.filteredIntegrations.filter((integration) =>
-        integration.category.includes(category)
-      );
+        integration.category.includes(category),
+      )
     },
 
     sendIntegrationData(data) {
-      vscode.postMessage(JSON.parse(JSON.stringify(data)));
+      vscode.postMessage(JSON.parse(JSON.stringify(data)))
     },
-  }));
-});
+  }))
+})
 
 document.addEventListener('DOMContentLoaded', function () {
-  Alpine.start();
-});
+  Alpine.start()
+})

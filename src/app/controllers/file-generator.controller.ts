@@ -1,9 +1,7 @@
-import { access, existsSync, mkdirSync, writeFile } from 'fs'
-import { dirname, join } from 'path'
-import { Uri, WorkspaceFolder, l10n, window, workspace } from 'vscode'
+import { l10n, Uri, WorkspaceFolder, window, workspace } from 'vscode'
 
 import { EXTENSION_DISPLAY_NAME, ExtensionConfig } from '../configs'
-import { getName, getPath, showError, showMessage } from '../helpers'
+import { getName, getPath, saveFile, showError, showMessage } from '../helpers'
 
 /**
  * The FileGeneratorController class.
@@ -307,11 +305,11 @@ const { text } = Astro.props;
     }
 
     let workspaceFolder: WorkspaceFolder | undefined
-    let relativeFolderPath: string = ''
+    let relativeDirectoryPath: string = ''
 
     if (folderPath) {
       workspaceFolder = workspace.getWorkspaceFolder(folderPath)
-      relativeFolderPath = workspace.asRelativePath(folderPath)
+      relativeDirectoryPath = workspace.asRelativePath(folderPath)
     } else if (
       workspace.workspaceFolders &&
       workspace.workspaceFolders.length === 1
@@ -333,13 +331,13 @@ const { text } = Astro.props;
     }
 
     const skipFolderConfirmation = this.config.skipFolderConfirmation
-    let folderName: string | undefined
+    let relativeDirectoryInput: string | undefined
 
     if (!folderPath || !skipFolderConfirmation) {
-      folderName = await getPath(
+      relativeDirectoryInput = await getPath(
         l10n.t('Enter the folder name where the file will be created'),
         l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
-        relativeFolderPath,
+        relativeDirectoryPath,
         (path) =>
           !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
             ? l10n.t(
@@ -348,12 +346,12 @@ const { text } = Astro.props;
             : undefined,
       )
 
-      if (!folderName) {
+      if (!relativeDirectoryInput) {
         showMessage(l10n.t('Operation canceled'))
         return
       }
-    } else {
-      folderName = relativeFolderPath
+
+      relativeDirectoryPath = relativeDirectoryInput
     }
 
     const componentName = await getName(
@@ -370,11 +368,10 @@ const { text } = Astro.props;
       return
     }
 
-    const resolvedFolderPath = join(workspaceFolder.uri.fsPath, folderName)
-    const fileName = `${componentName}.astro`
-    const content = this.fileContent(componentName, template)
+    const filename = `${componentName}.astro`
+    const fileContent = this.fileContent(componentName, template)
 
-    this.saveFile(resolvedFolderPath, fileName, content)
+    await saveFile(relativeDirectoryPath, filename, fileContent)
   }
 
   /**
@@ -404,11 +401,11 @@ const { text } = Astro.props;
     }
 
     let workspaceFolder: WorkspaceFolder | undefined
-    let relativeFolderPath: string = ''
+    let relativeDirectoryPath: string = ''
 
     if (folderPath) {
       workspaceFolder = workspace.getWorkspaceFolder(folderPath)
-      relativeFolderPath = workspace.asRelativePath(folderPath)
+      relativeDirectoryPath = workspace.asRelativePath(folderPath)
     } else if (
       workspace.workspaceFolders &&
       workspace.workspaceFolders.length === 1
@@ -430,13 +427,13 @@ const { text } = Astro.props;
     }
 
     const skipFolderConfirmation = this.config.skipFolderConfirmation
-    let folderName: string | undefined
+    let relativeDirectoryInput: string | undefined
 
     if (!folderPath || !skipFolderConfirmation) {
-      folderName = await getPath(
+      relativeDirectoryInput = await getPath(
         l10n.t('Enter the folder name where the file will be created'),
         l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
-        relativeFolderPath,
+        relativeDirectoryPath,
         (path) =>
           !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
             ? l10n.t(
@@ -445,32 +442,32 @@ const { text } = Astro.props;
             : undefined,
       )
 
-      if (!folderName) {
+      if (!relativeDirectoryInput) {
         showMessage(l10n.t('Operation canceled'))
         return
       }
-    } else {
-      folderName = relativeFolderPath
+
+      relativeDirectoryPath = relativeDirectoryInput
     }
 
     // Build quick pick items for user selection. Note: the `extension`
     // field must NOT include a leading dot. The generator constructs
     // filenames as `${ComponentName}.${extension}`.
-    const items = customComponents.map((item: any) => {
+    const templateOptions = customComponents.map((item: any) => {
       return {
         label: item.name,
         description: item.description,
-        detail: `Extension: ${item.extension}`,
+        detail: l10n.t('Extension: {0}', item.extension),
       }
     })
 
-    const option = await window.showQuickPick(items, {
+    const selectedTemplateOption = await window.showQuickPick(templateOptions, {
       placeHolder: l10n.t(
         'Select the template for the custom element generation',
       ),
     })
 
-    if (option === undefined) {
+    if (selectedTemplateOption === undefined) {
       showMessage(l10n.t('Operation canceled'))
       return
     }
@@ -489,11 +486,11 @@ const { text } = Astro.props;
       return
     }
 
-    const template = customComponents.find(
-      (item: any) => item.name === option.label,
+    const selectedTemplateDescriptor = customComponents.find(
+      (item: any) => item.name === selectedTemplateOption.label,
     )
 
-    if (!template) {
+    if (!selectedTemplateDescriptor) {
       const message = l10n.t(
         'The template for the custom component does not exist. Please try again',
       )
@@ -501,14 +498,13 @@ const { text } = Astro.props;
       return
     }
 
-    const componentTemplate = template.template.join('\n')
+    const componentTemplate = selectedTemplateDescriptor.template.join('\n')
 
-    const resolvedFolderPath = join(workspaceFolder.uri.fsPath, folderName)
     // Compose filename with extension (no leading dot expected in config)
-    const fileName = `${componentName}.${template.extension}`
-    const content = this.fileContent(componentName, componentTemplate)
+    const filename = `${componentName}.${selectedTemplateDescriptor.extension}`
+    const fileContent = this.fileContent(componentName, componentTemplate)
 
-    this.saveFile(resolvedFolderPath, fileName, content)
+    await saveFile(relativeDirectoryPath, filename, fileContent)
   }
 
   /**
@@ -545,70 +541,5 @@ const { text } = Astro.props;
     }
 
     return content
-  }
-
-  /**
-   * The saveFile method.
-   *
-   * @function saveFile
-   * @private
-   * @async
-   * @memberof FilesController
-   * @example
-   * controller.saveFile('path', 'filename', 'data');
-   *
-   * @param {string} directoryPath - The path
-   * @param {string} fileName - The filename
-   * @param {string} fileContent - The data
-   *
-   * @returns {Promise<void>} - The promise with no return value
-   */
-  private async saveFile(
-    directoryPath: string,
-    fileName: string,
-    fileContent: string,
-  ): Promise<void> {
-    const file = join(directoryPath, fileName)
-
-    if (!existsSync(dirname(file))) {
-      mkdirSync(dirname(file), { recursive: true })
-    }
-
-    access(file, (err: any) => {
-      if (err) {
-        // File does not exist: write directly to path (no fd to manage)
-        writeFile(file, fileContent, 'utf8', (writeErr: any) => {
-          if (writeErr) {
-            const message = l10n.t(
-              'The file has not been created! Please try again',
-            )
-            showError(message)
-            return
-          }
-
-          const openPath = Uri.file(file)
-          workspace.openTextDocument(openPath).then(async (doc) => {
-            await window.showTextDocument(doc)
-          })
-
-          const message = l10n.t('File created successfully!')
-          showMessage(message)
-        })
-      } else {
-        // File exists: offer to open it
-        const message = l10n.t(
-          'The file name already exists! Please enter a different name',
-        )
-        const openLabel = l10n.t('Open File')
-        window.showWarningMessage(message, openLabel).then((action) => {
-          if (action === openLabel) {
-            const openPath = Uri.file(file)
-            workspace
-              .openTextDocument(openPath)
-              .then((doc) => window.showTextDocument(doc))
-          }
-        })
-      }
-    })
   }
 }

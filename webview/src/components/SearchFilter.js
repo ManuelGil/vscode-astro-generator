@@ -24,4 +24,4 @@ export const SearchFilter = `
     </svg>
   </div>
 </div>
-`;
+`

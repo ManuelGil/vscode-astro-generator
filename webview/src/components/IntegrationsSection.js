@@ -89,4 +89,4 @@ export const IntegrationsSection = `
     </ul>
   </div>
 </div>
-`;
+`

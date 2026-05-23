@@ -1,4 +1,3 @@
-import pLimit from 'p-limit'
 import {
   Event,
   EventEmitter,
@@ -201,16 +200,12 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
    * @returns {void} - No return value
    */
   dispose(): void {
-    this._onDidChangeTreeData.dispose()
     if (this._isDisposed) {
       return
     }
 
     this._isDisposed = true
-
-    if (this._onDidChangeTreeData) {
-      this._onDidChangeTreeData.dispose()
-    }
+    this._onDidChangeTreeData.dispose()
   }
 
   // Private methods
@@ -233,6 +228,8 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
     }
 
     const componentRegex = /<([A-Z][A-Za-z0-9_]*)\b/g
+
+    const { default: pLimit } = await import('p-limit')
     const limit = pLimit(2)
 
     await Promise.all(
@@ -244,9 +241,7 @@ export class ListComponentsProvider implements TreeDataProvider<NodeModel> {
           }
 
           try {
-            const document = await workspace.openTextDocument(
-              file.resourceUri.fsPath,
-            )
+            const document = await workspace.openTextDocument(file.resourceUri)
             const fullText = document.getText()
             const children: NodeModel[] = []
 

@@ -1,4 +1,4 @@
-import { MessageItem, Uri, env, l10n, window } from 'vscode'
+import { env, l10n, MessageItem, Uri, window } from 'vscode'
 
 import {
   EXTENSION_BUGS_URL,

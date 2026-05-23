@@ -2730,4 +2730,4 @@ export const integrations = [
       },
     ],
   },
-];
+]
