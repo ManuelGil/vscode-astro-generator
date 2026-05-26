@@ -7,7 +7,7 @@ export enum CommandIds {
   GenerateBasicComponent = 'file.generateBasicComponent',
   GenerateLayoutWithSlots = 'file.generateLayoutWithSlots',
   GenerateStaticDataPage = 'file.generateStaticDataPage',
-  generatePageWithDataFetching = 'file.generatePageWithDataFetching',
+  GeneratePageWithDataFetching = 'file.generatePageWithDataFetching',
   GenerateStyledComponent = 'file.generateStyledComponent',
   GenerateCustomComponent = 'file.generateCustomComponent',
   ListOpenFile = 'list.openFile',

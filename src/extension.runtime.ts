@@ -407,7 +407,7 @@ export class ExtensionRuntime {
     registerGuardedFileCommand(CommandIds.GenerateStaticDataPage, (uri) =>
       fileGeneratorController.generateStaticDataPage(uri),
     )
-    registerGuardedFileCommand(CommandIds.generatePageWithDataFetching, (uri) =>
+    registerGuardedFileCommand(CommandIds.GeneratePageWithDataFetching, (uri) =>
       fileGeneratorController.generatePageWithDataFetching(uri),
     )
     registerGuardedFileCommand(CommandIds.GenerateStyledComponent, (uri) =>
