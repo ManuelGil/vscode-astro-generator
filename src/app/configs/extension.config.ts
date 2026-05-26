@@ -127,6 +127,17 @@ export class ExtensionConfig {
    */
   customComponents: ContentTemplate[]
 
+  /**
+   * The selected workspace folder.
+   * @type {string | undefined}
+   * @public
+   * @memberof ExtensionConfig
+   * @example
+   * const config = new ExtensionConfig(workspace.getConfiguration());
+   * console.log(config.workspaceSelection);
+   */
+  workspaceSelection: string | undefined
+
   // -----------------------------------------------------------------
   // Constructor
   // -----------------------------------------------------------------

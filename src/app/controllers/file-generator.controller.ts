@@ -1,7 +1,22 @@
+import { dirname } from 'path'
 import { l10n, Uri, WorkspaceFolder, window, workspace } from 'vscode'
 
-import { EXTENSION_DISPLAY_NAME, ExtensionConfig } from '../configs'
-import { getName, getPath, saveFile, showError, showMessage } from '../helpers'
+import {
+  ContentTemplate,
+  EXTENSION_DISPLAY_NAME,
+  ExtensionConfig,
+} from '../configs'
+import {
+  getName,
+  getPath,
+  getSelectedWorkspaceFolder,
+  relativePath,
+  saveFile,
+  showError,
+  showMessage,
+} from '../helpers'
+
+const OPERATION_CANCELED_MESSAGE = l10n.t('Operation canceled')
 
 /**
  * The FileGeneratorController class.
@@ -47,18 +62,22 @@ export class FileGeneratorController {
    */
   async generateBasicPage(folderPath?: Uri): Promise<void> {
     const template = `---
-title: "Basic Page"
-description: "This is a basic page generated automatically."
+const title = "Basic Page";
+const description = "This is a basic page generated automatically.";
 ---
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
   <head>
-    <title>{title}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <title>{title}</title>
   </head>
+
   <body>
     <h1>Hello, Astro!</h1>
-    <p> This is a basic page generated automatically. </p>
+    <p>This is a basic page generated automatically.</p>
   </body>
 </html>`
 
@@ -81,9 +100,10 @@ description: "This is a basic page generated automatically."
    */
   async generateBasicComponent(folderPath?: Uri): Promise<void> {
     const template = `---
-export interface Props {
+interface Props {
   message: string;
 }
+
 const { message } = Astro.props;
 ---
 <div>
@@ -109,7 +129,7 @@ const { message } = Astro.props;
    */
   async generateLayoutWithSlots(folderPath?: Uri): Promise<void> {
     const template = `---
-export interface Props {
+interface Props {
   title: string;
 }
 const { title } = Astro.props;
@@ -117,6 +137,8 @@ const { title } = Astro.props;
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
   </head>
   <body>
@@ -151,7 +173,13 @@ const { title } = Astro.props;
    */
   async generateStaticDataPage(folderPath?: Uri): Promise<void> {
     const template = `---
-const posts = [
+interface Post {
+  id: number;
+  title: string;
+  description: string;
+}
+
+const posts: Post[] = [
   { id: 1, title: "First post", description: "This is the first post." },
   { id: 2, title: "Second post", description: "This is the second post." },
 ];
@@ -165,7 +193,7 @@ const posts = [
     <h1>Blog</h1>
     <ul>
       {posts.map((post) => (
-        <li key={post.id}>
+        <li>
           <h2>{post.title}</h2>
           <p>{post.description}</p>
         </li>
@@ -178,23 +206,27 @@ const posts = [
   }
 
   /**
-   * The generatePageWithGetStaticProps method.
+   * The generatePageWithDataFetching method.
    *
-   * @function generatePageWithGetStaticProps
+   * @function generatePageWithDataFetching
    * @public
    * @async
    * @memberof FilesController
    * @example
-   * controller.generatePageWithGetStaticProps(Uri.parse('path'));
+   * controller.generatePageWithDataFetching(Uri.parse('path'));
    *
    * @param {Uri} folderPath - The folder path
    *
    * @returns {Promise<void>} - The promise with no return value
    */
-  async generatePageWithGetStaticProps(folderPath?: Uri): Promise<void> {
+  async generatePageWithDataFetching(folderPath?: Uri): Promise<void> {
     const template = `---
 const response = await fetch("https://api.example.com/data")
-const data = await response.json()
+const data: Array<{
+  id: number;
+  name: string;
+  description: string;
+}> = await response.json();
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -205,7 +237,7 @@ const data = await response.json()
     <h1>Data from API</h1>
     <ul>
       {data.map((item) => (
-        <li key={item.id}>
+        <li>
           <strong>{item.name}</strong>: {item.description}
         </li>
       ))}
@@ -232,7 +264,7 @@ const data = await response.json()
    */
   async generateStyledComponent(folderPath?: Uri): Promise<void> {
     const template = `---
-export interface Props {
+interface Props {
   text: string;
 }
 const { text } = Astro.props;
@@ -293,85 +325,23 @@ const { text } = Astro.props;
     template: string,
     folderPath?: Uri,
   ): Promise<void> {
-    const { enable } = this.config
+    const relativeDirectoryPath: string | undefined =
+      await this.resolveTargetDirectory(folderPath, true)
 
-    if (!enable) {
-      const message = l10n.t(
-        '{0} is disabled in settings. Enable it to use its features',
-        EXTENSION_DISPLAY_NAME,
-      )
-      showError(message)
+    if (!relativeDirectoryPath) {
       return
     }
 
-    let workspaceFolder: WorkspaceFolder | undefined
-    let relativeDirectoryPath: string = ''
-
-    if (folderPath) {
-      workspaceFolder = workspace.getWorkspaceFolder(folderPath)
-      relativeDirectoryPath = workspace.asRelativePath(folderPath)
-    } else if (
-      workspace.workspaceFolders &&
-      workspace.workspaceFolders.length === 1
-    ) {
-      workspaceFolder = workspace.workspaceFolders[0]
-    } else {
-      const placeHolder = l10n.t(
-        'Select a workspace folder to use. This folder will be used to generate the file',
-      )
-      workspaceFolder = await window.showWorkspaceFolderPick({
-        placeHolder,
-      })
-    }
-
-    if (!workspaceFolder) {
-      // User likely canceled the picker
-      showMessage(l10n.t('Operation canceled'))
-      return
-    }
-
-    const skipFolderConfirmation = this.config.skipFolderConfirmation
-    let relativeDirectoryInput: string | undefined
-
-    if (!folderPath || !skipFolderConfirmation) {
-      relativeDirectoryInput = await getPath(
-        l10n.t('Enter the folder name where the file will be created'),
-        l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
-        relativeDirectoryPath,
-        (path) =>
-          !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
-            ? l10n.t(
-                'The folder name is invalid! Please enter a valid folder name',
-              )
-            : undefined,
-      )
-
-      if (!relativeDirectoryInput) {
-        showMessage(l10n.t('Operation canceled'))
-        return
-      }
-
-      relativeDirectoryPath = relativeDirectoryInput
-    }
-
-    const componentName = await getName(
-      l10n.t('Enter the component name'),
-      l10n.t('Enter the component name, e.g. User, Product, Order, etc'),
-      (name) =>
-        !/^[a-zA-Z\-]+?$/.test(name)
-          ? l10n.t('The component name is invalid! Please enter a valid name')
-          : undefined,
-    )
+    const componentName: string | undefined = await this.promptComponentName()
 
     if (!componentName) {
-      showMessage(l10n.t('Operation canceled'))
       return
     }
 
-    const filename = `${componentName}.astro`
-    const fileContent = this.fileContent(componentName, template)
+    const filename: string = `${componentName}.astro`
+    const fileContent: string = this.fileContent(componentName, template)
 
-    await saveFile(relativeDirectoryPath, filename, fileContent)
+    await saveFile(relativeDirectoryPath, filename, fileContent, this.config)
   }
 
   /**
@@ -389,71 +359,19 @@ const { text } = Astro.props;
    * @returns {Promise<void>} - The promise with no return value
    */
   private async generateCustomComponentFile(folderPath?: Uri): Promise<void> {
-    const { enable, customComponents } = this.config
+    const relativeDirectoryPath: string | undefined =
+      await this.resolveTargetDirectory(folderPath)
 
-    if (!enable) {
-      const message = l10n.t(
-        '{0} is disabled in settings. Enable it to use its features',
-        EXTENSION_DISPLAY_NAME,
-      )
-      showError(message)
+    if (!relativeDirectoryPath) {
       return
     }
 
-    let workspaceFolder: WorkspaceFolder | undefined
-    let relativeDirectoryPath: string = ''
-
-    if (folderPath) {
-      workspaceFolder = workspace.getWorkspaceFolder(folderPath)
-      relativeDirectoryPath = workspace.asRelativePath(folderPath)
-    } else if (
-      workspace.workspaceFolders &&
-      workspace.workspaceFolders.length === 1
-    ) {
-      workspaceFolder = workspace.workspaceFolders[0]
-    } else {
-      const placeHolder = l10n.t(
-        'Select a workspace folder to use. This folder will be used to generate the file',
-      )
-      workspaceFolder = await window.showWorkspaceFolderPick({
-        placeHolder,
-      })
-    }
-
-    if (!workspaceFolder) {
-      // User likely canceled the picker
-      showMessage(l10n.t('Operation canceled'))
-      return
-    }
-
-    const skipFolderConfirmation = this.config.skipFolderConfirmation
-    let relativeDirectoryInput: string | undefined
-
-    if (!folderPath || !skipFolderConfirmation) {
-      relativeDirectoryInput = await getPath(
-        l10n.t('Enter the folder name where the file will be created'),
-        l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
-        relativeDirectoryPath,
-        (path) =>
-          !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
-            ? l10n.t(
-                'The folder name is invalid! Please enter a valid folder name',
-              )
-            : undefined,
-      )
-
-      if (!relativeDirectoryInput) {
-        showMessage(l10n.t('Operation canceled'))
-        return
-      }
-
-      relativeDirectoryPath = relativeDirectoryInput
-    }
+    const { customComponents } = this.config
 
     // Build quick pick items for user selection. Note: the `extension`
     // field must NOT include a leading dot. The generator constructs
     // filenames as `${ComponentName}.${extension}`.
-    const templateOptions = customComponents.map((item: any) => {
+    const templateOptions = customComponents.map((item: ContentTemplate) => {
       return {
         label: item.name,
         description: item.description,
@@ -467,27 +385,19 @@ const { text } = Astro.props;
       ),
     })
 
-    if (selectedTemplateOption === undefined) {
-      showMessage(l10n.t('Operation canceled'))
+    if (!selectedTemplateOption) {
+      void showMessage(OPERATION_CANCELED_MESSAGE)
       return
     }
 
-    const componentName = await getName(
-      l10n.t('Enter the component name'),
-      l10n.t('Enter the component name, e.g. User, Product, Order, etc'),
-      (name) =>
-        !/^[a-zA-Z\-]+?$/.test(name)
-          ? l10n.t('The component name is invalid! Please enter a valid name')
-          : undefined,
-    )
+    const componentName: string | undefined = await this.promptComponentName()
 
     if (!componentName) {
-      showMessage(l10n.t('Operation canceled'))
       return
     }
 
     const selectedTemplateDescriptor = customComponents.find(
-      (item: any) => item.name === selectedTemplateOption.label,
+      (item: ContentTemplate) => item.name === selectedTemplateOption.label,
     )
 
     if (!selectedTemplateDescriptor) {
@@ -498,13 +408,98 @@ const { text } = Astro.props;
       return
     }
 
-    const componentTemplate = selectedTemplateDescriptor.template.join('\n')
+    const componentTemplate: string =
+      selectedTemplateDescriptor.template.join('\n')
 
     // Compose filename with extension (no leading dot expected in config)
-    const filename = `${componentName}.${selectedTemplateDescriptor.extension}`
-    const fileContent = this.fileContent(componentName, componentTemplate)
+    const filename: string = `${componentName}.${selectedTemplateDescriptor.extension}`
+    const fileContent: string = this.fileContent(
+      componentName,
+      componentTemplate,
+    )
 
-    await saveFile(relativeDirectoryPath, filename, fileContent)
+    await saveFile(relativeDirectoryPath, filename, fileContent, this.config)
+  }
+
+  private async resolveTargetDirectory(
+    folderPath: Uri | undefined,
+    allowActiveEditorFallback: boolean = false,
+  ): Promise<string | undefined> {
+    let workspaceFolder: WorkspaceFolder | undefined
+    let relativeDirectoryPath: string = ''
+    const hasWorkspaceFolders: boolean = Boolean(
+      workspace.workspaceFolders?.length,
+    )
+
+    if (folderPath) {
+      workspaceFolder = workspace.getWorkspaceFolder(folderPath)
+      relativeDirectoryPath = relativePath(folderPath, true, this.config)
+    } else {
+      workspaceFolder = getSelectedWorkspaceFolder(this.config)
+
+      if (!workspaceFolder && hasWorkspaceFolders) {
+        const placeHolder: string = l10n.t(
+          'Select a workspace folder to use. This folder will be used to generate the file',
+        )
+        workspaceFolder = await window.showWorkspaceFolderPick({
+          placeHolder,
+        })
+      }
+    }
+
+    if (!workspaceFolder) {
+      void showMessage(OPERATION_CANCELED_MESSAGE)
+      return undefined
+    }
+
+    if (allowActiveEditorFallback) {
+      relativeDirectoryPath = this.resolveInitialDirectoryPath(
+        workspaceFolder,
+        folderPath,
+        relativeDirectoryPath,
+      )
+    }
+
+    if (folderPath && this.config.skipFolderConfirmation) {
+      return relativeDirectoryPath
+    }
+
+    const relativeDirectoryInput: string | undefined = await getPath(
+      l10n.t('Enter the folder name where the file will be created'),
+      l10n.t('Enter the folder name, e.g. models, services, utils, etc'),
+      relativeDirectoryPath,
+      (path) =>
+        !/^(?!\/)[^\sÀ-ÿ]+?$/.test(path)
+          ? l10n.t(
+              'The folder name is invalid! Please enter a valid folder name',
+            )
+          : undefined,
+    )
+
+    if (!relativeDirectoryInput) {
+      void showMessage(OPERATION_CANCELED_MESSAGE)
+      return undefined
+    }
+
+    return relativeDirectoryInput
+  }
+
+  private async promptComponentName(): Promise<string | undefined> {
+    const componentName: string | undefined = await getName(
+      l10n.t('Enter the component name'),
+      l10n.t('Enter the component name, e.g. User, Product, Order, etc'),
+      (name) =>
+        !/^[a-zA-Z\-]+?$/.test(name)
+          ? l10n.t('The component name is invalid! Please enter a valid name')
+          : undefined,
+    )
+
+    if (!componentName) {
+      void showMessage(OPERATION_CANCELED_MESSAGE)
+      return undefined
+    }
+
+    return componentName
   }
 
   /**
@@ -541,5 +536,44 @@ const { text } = Astro.props;
     }
 
     return content
+  }
+
+  private resolveInitialDirectoryPath(
+    workspaceFolder: WorkspaceFolder,
+    folderPath: Uri | undefined,
+    currentRelativePath: string,
+  ): string {
+    if (folderPath || currentRelativePath) {
+      return currentRelativePath
+    }
+
+    const activeEditor = window.activeTextEditor
+    if (
+      !activeEditor ||
+      activeEditor.document.isUntitled ||
+      activeEditor.document.uri.scheme !== workspaceFolder.uri.scheme
+    ) {
+      return currentRelativePath
+    }
+
+    const activeWorkspaceFolder = workspace.getWorkspaceFolder(
+      activeEditor.document.uri,
+    )
+
+    if (
+      !activeWorkspaceFolder ||
+      activeWorkspaceFolder.uri.toString() !== workspaceFolder.uri.toString()
+    ) {
+      return currentRelativePath
+    }
+
+    const activeFolderUri = Uri.file(dirname(activeEditor.document.uri.fsPath))
+    const relativeFolderPath = relativePath(activeFolderUri, true, this.config)
+
+    if (!relativeFolderPath || relativeFolderPath === '.') {
+      return ''
+    }
+
+    return relativeFolderPath
   }
 }

@@ -9,6 +9,8 @@ import {
   workspace,
 } from 'vscode'
 
+import { toPosixPath } from './path-format.helper'
+
 // Shared cache for all file operations across the extension
 const findFilesCache: Map<string, { files: Uri[]; timestamp: number }> =
   new Map()
@@ -28,8 +30,6 @@ export interface FindFilesOptions {
   enableGitignoreDetection?: boolean
 }
 
-const toPosix = (filePath: string) => filePath.replace(/\\/g, '/')
-
 const getIgnoreMatcher = async (options: {
   baseDirectoryPath: string
   excludedPatterns: string[]
@@ -40,7 +40,7 @@ const getIgnoreMatcher = async (options: {
   const ignoreMatcher = ignore()
 
   if (excludedPatterns.length) {
-    ignoreMatcher.add(excludedPatterns.map(toPosix))
+    ignoreMatcher.add(excludedPatterns.map(toPosixPath))
   }
 
   if (enableGitignoreDetection) {
@@ -69,7 +69,7 @@ const findFilesRemote = async (
   const { includeFilePatterns, excludedPatterns = [] } = options
   const seen = new Set<string>()
   const aggregated: Uri[] = []
-  const posixExcluded = excludedPatterns.map(toPosix)
+  const posixExcluded = excludedPatterns.map(toPosixPath)
   const combinedExclude =
     posixExcluded.length > 0 ? `{${posixExcluded.join(',')}}` : undefined
   let total = 0
@@ -101,17 +101,17 @@ const findFilesRemote = async (
     }
   }
 
-  const basePosix = toPosix(options.baseDirectoryPath).replace(/\/$/, '')
+  const basePosix = toPosixPath(options.baseDirectoryPath).replace(/\/$/, '')
 
   const filterByDepth = (candidateUri: Uri) => {
     if (options.disableRecursive) {
-      const rel = toPosix(candidateUri.fsPath).slice(basePosix.length + 1)
+      const rel = toPosixPath(candidateUri.fsPath).slice(basePosix.length + 1)
       return !rel.includes('/')
     }
     if (!options.maxRecursionDepth || options.maxRecursionDepth <= 0) {
       return true
     }
-    const relativeFilePath = toPosix(candidateUri.fsPath).slice(
+    const relativeFilePath = toPosixPath(candidateUri.fsPath).slice(
       basePosix.length + 1,
     )
     const segments = relativeFilePath.split('/')
@@ -131,7 +131,7 @@ const findFilesRemote = async (
     if (!ignoreMatcher) {
       return true
     }
-    const filePosix = toPosix(candidateUri.fsPath)
+    const filePosix = toPosixPath(candidateUri.fsPath)
     const relativeFilePath = posix.relative(basePosix, filePosix)
     return !ignoreMatcher.ignores(relativeFilePath)
   }
@@ -153,7 +153,7 @@ const findFilesLocal = async (
     includeFilePatterns,
     excludedPatterns = [],
   } = options
-  const includeGlobs = includeFilePatterns.map(toPosix)
+  const includeGlobs = includeFilePatterns.map(toPosixPath)
 
   const aggregatedUris: Uri[] = []
   const seenPaths = new Set<string>()
@@ -162,7 +162,7 @@ const findFilesLocal = async (
   const stream = FastGlob.stream(includeGlobs, {
     cwd: baseDirectoryPath,
     dot: options.includeDotfiles,
-    ignore: excludedPatterns.map(toPosix),
+    ignore: excludedPatterns.map(toPosixPath),
     onlyFiles: true,
     unique: true,
     followSymbolicLinks: true,
@@ -174,14 +174,14 @@ const findFilesLocal = async (
       if (!matchedPath) {
         continue
       }
-      const absolutePosixPath = toPosix(matchedPath)
+      const absolutePosixPath = toPosixPath(matchedPath)
       if (seenPaths.has(absolutePosixPath)) {
         continue
       }
 
       const candidateUri = Uri.file(matchedPath)
 
-      const basePosix = toPosix(baseDirectoryPath).replace(/\/$/, '')
+      const basePosix = toPosixPath(baseDirectoryPath).replace(/\/$/, '')
       const relPath = absolutePosixPath.startsWith(`${basePosix}/`)
         ? absolutePosixPath.slice(basePosix.length + 1)
         : absolutePosixPath
@@ -334,8 +334,8 @@ export const findFiles = async (options: FindFilesOptions): Promise<Uri[]> => {
 
     const cacheKey = JSON.stringify({
       baseDir: baseDirectoryPath,
-      include: [...includeFilePatterns].map(toPosix).sort(),
-      exclude: [...excludedPatterns].map(toPosix).sort(),
+      include: [...includeFilePatterns].map(toPosixPath).sort(),
+      exclude: [...excludedPatterns].map(toPosixPath).sort(),
       disableRecursive,
       maxRecursionDepth,
       includeDotfiles,

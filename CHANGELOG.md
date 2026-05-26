@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-05-25
+
+### Added
+
+- Add scheduled Dependabot updates and pull-request CI validation to automate dependency and build checks.
+- Add a workspace switching command for selecting the active workspace used during file generation.
+
+### Changed
+
+- Move activation into a dedicated runtime that centralizes configuration sync, version prompts, enablement guards, and list refreshes.
+- Improve generation prompts by reusing semantic helpers, honoring the active editor as the default folder, and unifying cancellation messaging.
+- Reconcile workspace ownership across runtime, controllers, and helpers by centralizing workspace selection semantics in semantic helper roots.
+- Unify file discovery and path normalization through the cached finder and shared normalization helpers to improve cross-platform consistency and refresh component lists faster.
+- Refine controller orchestration boundaries so controllers focus exclusively on UX flow while semantic helpers manage workspace, path, and filesystem semantics.
+
+### Fixed
+
+- Align English and Spanish localization bundles with the runtime strings to eliminate missing-key warnings.
+- Remove stale helper exports, duplicate semantic path normalization, and residual workspace fallback duplication across generation flows.
+
 ## [1.5.0] - 2024-08-16
 
 ### Changed
@@ -53,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the extension.
 
-[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.5.0...HEAD
+[unreleased]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ManuelGil/vscode-astro-generator/compare/v1.2.0...v1.3.0

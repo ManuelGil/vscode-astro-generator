@@ -11,8 +11,12 @@ import {
 } from 'vscode'
 
 import { EXTENSION_ID, ExtensionConfig } from '../configs'
-import { type FindFilesOptions, findFiles } from '../helpers/find-files.helper'
-import { relativePath } from '../helpers/relative-path.helper'
+import {
+  type FindFilesOptions,
+  findFiles,
+  getWorkspaceRoot,
+  relativePath,
+} from '../helpers'
 import { NodeModel } from '../models'
 
 /**
@@ -80,15 +84,15 @@ export class ListFilesController {
     maxResults: number = Number.MAX_SAFE_INTEGER,
   ): Promise<NodeModel[] | void> {
     try {
-      // Get the workspace folder
-      const workspaceFolder = workspace.workspaceFolders?.[0]
-      if (!workspaceFolder) {
+      // Respect the user-selected workspace root (or first available workspace)
+      const workspaceRootPath = getWorkspaceRoot(this.config)
+      if (!workspaceRootPath) {
         return
       }
 
       // Prepare options for findFiles helper
       const findFilesOptions: FindFilesOptions = {
-        baseDirectoryPath: workspaceFolder.uri.fsPath,
+        baseDirectoryPath: workspaceRootPath,
         includeFilePatterns: this.config.include.map(
           (ext) => `**/*${ext.startsWith('.') ? '' : '.'}${ext}`,
         ),
@@ -115,6 +119,7 @@ export class ListFilesController {
             const relativeFilePath = relativePath(
               document.uri,
               this.config.showPath,
+              this.config,
             )
             let displayFilename = relativeFilePath.split('/').pop()
 
