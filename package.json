@@ -306,7 +306,7 @@
 		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.8",
+		"@biomejs/biome": "2.5.10",
 		"@commitlint/cli": "^19.8.1",
 		"@commitlint/config-conventional": "^19.8.1",
 		"@tailwindcss/postcss": "^4.3.3",
@@ -331,7 +331,7 @@
 	},
 	"dependencies": {
 		"@vscode/codicons": "^0.0.45",
-		"alpinejs": "^3.16.1",
+		"alpinejs": "^3.16.2",
 		"p-limit": "^7.3.1",
 		"vscode-marketplace-client": "^1.2.5"
 	},
