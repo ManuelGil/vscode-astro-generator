@@ -306,17 +306,17 @@
 		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.12",
+		"@biomejs/biome": "2.5.14",
 		"@commitlint/cli": "^19.8.1",
 		"@commitlint/config-conventional": "^19.8.1",
 		"@tailwindcss/postcss": "^4.3.3",
 		"@types/mocha": "^10.0.10",
-		"@types/node": "^22.20.1",
+		"@types/node": "^22.20.4",
 		"@types/vscode": "^1.102.0",
 		"@vscode/l10n-dev": "^0.0.35",
 		"@vscode/test-cli": "^0.0.15",
 		"@vscode/test-electron": "^2.5.2",
-		"autoprefixer": "^10.5.5",
+		"autoprefixer": "^10.6.1",
 		"cpy-cli": "^6.0.0",
 		"esbuild": "^0.28.2",
 		"glob": "^11.1.0",
@@ -331,8 +331,8 @@
 	},
 	"dependencies": {
 		"@vscode/codicons": "^0.0.45",
-		"alpinejs": "^3.17.1",
-		"p-limit": "^7.3.2",
+		"alpinejs": "^3.17.3",
+		"p-limit": "^7.3.3",
 		"vscode-marketplace-client": "^1.2.5"
 	},
 	"pnpm": {
